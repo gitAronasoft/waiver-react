@@ -299,7 +299,7 @@ const response = await axios.post(`${BACKEND_URL}/api/waivers`, fullData);
               <div className="my-4">
                 <div className="confirm-box text-start">
                   <label className="custom-checkbox-wrapper">
-                    <input type="checkbox" className="custom-checkbox"  required/>
+                    <input type="checkbox" className="custom-checkbox"  checked/>
                     <span className="custom-checkbox-label">
                       <h5>
                         Save time on your next visit! Use your phone number as a reference for future waivers. Just check the box and receive a quick validation text.

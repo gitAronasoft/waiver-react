@@ -18,22 +18,7 @@ function ExistingCustomerLogin() {
     }
   };
 
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      const key = e.key;
-      if (/^[0-9]$/.test(key) && phone.length < 10) {
-        setPhone((prev) => prev + key);
-      } else if (key === "Backspace") {
-        setPhone((prev) => prev.slice(0, -1));
-      } else if (key.toLowerCase() === "c") {
-        setPhone("");
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [phone]);
-
+  // ✅ Only trigger sendOtp when phone reaches 10 digits
   useEffect(() => {
     if (phone.length === 10) {
       sendOtp();
@@ -43,11 +28,9 @@ function ExistingCustomerLogin() {
   const sendOtp = async () => {
     try {
       const res = await axios.post(`${BACKEND_URL}/api/auth/send-otp`, { phone });
-      //alert(res.data.message);
       toast.success(res.data.message);
-      navigate("/opt-verified", { state: { phone, customerType: "existing" } }); // ✅ Pass customerType
+      navigate("/opt-verified", { state: { phone, customerType: "existing" } });
     } catch (err) {
-      //alert(err?.response?.data?.message || "Error sending OTP");
       toast.error(err?.response?.data?.message || "Error sending OTP");
     }
   };
@@ -91,7 +74,10 @@ function ExistingCustomerLogin() {
                   maxLength="10"
                   className="pin-box mobile-number"
                   value={phone}
-                  readOnly // to prevent manual typing (we're using keypad)
+                  onChange={(e) => {
+                    const value = e.target.value.replace(/\D/g, "").slice(0, 10);
+                    setPhone(value);
+                  }}
                 />
               </div>
 
