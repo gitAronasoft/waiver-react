@@ -6,11 +6,15 @@ import { toast } from 'react-toastify';
 function HomePage() {
   const [customers, setCustomers] = useState([]);
   const [selected, setSelected] = useState(null); // { customer, waiverId }
+    const staff = JSON.parse(localStorage.getItem("staff")) || {};
   const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+
+  console.log(staff.id);
 
   const fetchData = async () => {
     try {
       const res = await axios.get(`${BACKEND_URL}/api/waivers/getAllCustomers`);
+      console.log(res.data);
       setCustomers(res.data);
     } catch (err) {
       console.error('Error fetching customers:', err);
@@ -19,15 +23,19 @@ function HomePage() {
   };
 
   const verifyWaiver = async (waiverId) => {
-    try {
-      await axios.post(`${BACKEND_URL}/api/waivers/verify/${waiverId}`);
-      toast.success("Waiver verified!");
-      fetchData(); // Refresh list
-    } catch (err) {
-      console.error('Error verifying waiver:', err);
-      toast.error("Verification failed");
-    }
-  };
+  try {
+    await axios.post(`${BACKEND_URL}/api/waivers/verify/${waiverId}`, {
+      staff_id: staff.id
+    });
+
+    toast.success("Waiver verified!");
+    fetchData(); // Refresh list
+  } catch (err) {
+    console.error('Error verifying waiver:', err);
+    toast.error("Verification failed");
+  }
+};
+
 
   useEffect(() => {
     fetchData();
@@ -149,8 +157,15 @@ function DetailsModal({ customer, waiverId, onClose, onVerify, onNotAccurate }) 
               </h5>
 
               {/* ✅ Customer Address */}
-              <p className="mt-2">
+              {/* <p className="mt-2">
                 <strong>Address:</strong> {customer.address || "Not Provided"}
+              </p> */}
+
+              <p className="mt-2">
+                <strong>Address:</strong>{" "}
+                {customer.address
+                  ? `${customer.address}, ${customer.city || ""}, ${customer.province || ""} ${customer.postal_code || ""}`
+                  : "Not Provided"}
               </p>
 
               {/* ✅ Show Minors */}
