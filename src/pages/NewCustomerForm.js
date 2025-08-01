@@ -8,7 +8,9 @@ function NewCustomerForm() {
   const location = useLocation();
   const customerType = location.state?.customerType || "new"; // "new" is the fallback
   const [showDuplicateNotice, setShowDuplicateNotice] = useState(false);
-   const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+  const [isChecked, setIsChecked] = useState(true); // ✅ checked by default
+  const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+
 
   console.log("Customer Type:", customerType); // Debug log
 
@@ -66,7 +68,8 @@ const response = await axios.post(`${BACKEND_URL}/api/waivers`, fullData);
 
     const otp = response.data.otp;
     //toast.success("✅ Customer created! OTP sent.");
-     toast.success(`Customer created and OTP sent successfully`);
+    //  toast.success(`Customer created and OTP sent successfully`);
+    toast.success(`Customer created and OTP sent successfully. OTP: ${otp}`);
     navigate("/opt-verified", {
       state: { phone: formData.cell_phone, customerType: "new" },
     });
@@ -296,7 +299,7 @@ const response = await axios.post(`${BACKEND_URL}/api/waivers`, fullData);
 
 
               {/* Save time checkbox */}
-              <div className="my-4">
+              {/* <div className="my-4">
                 <div className="confirm-box text-start">
                   <label className="custom-checkbox-wrapper">
                     <input type="checkbox" className="custom-checkbox"  checked/>
@@ -307,7 +310,25 @@ const response = await axios.post(`${BACKEND_URL}/api/waivers`, fullData);
                     </span>
                   </label>
                 </div>
-              </div>
+              </div> */}
+
+              <div className="my-4">
+  <div className="confirm-box text-start">
+    <label className="custom-checkbox-wrapper">
+      <input
+        type="checkbox"
+        className="custom-checkbox"
+        checked={isChecked}
+        onChange={() => setIsChecked((prev) => !prev)} // ✅ toggle
+      />
+      <span className="custom-checkbox-label">
+        <h5>
+          Save time on your next visit! Use your phone number as a reference for future waivers. Just check the box and receive a quick validation text.
+        </h5>
+      </span>
+    </label>
+  </div>
+</div>
 
               <div className="buttons mb-5">
                  {showDuplicateNotice && (
