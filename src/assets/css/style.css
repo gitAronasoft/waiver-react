@@ -39,6 +39,12 @@ a {
 }
 
 
+.required-star {
+  color: red;
+  margin-left: 4px;
+}
+
+
 /* input:focus {
   border: 1px solid var(--black);
   outline: none;

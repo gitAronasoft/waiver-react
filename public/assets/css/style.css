@@ -38,6 +38,11 @@ a {
   margin-top: 100px;
 }
 
+.required-star {
+  color: red;
+  margin-left: 4px;
+}
+
 
 /* input:focus {
   border: 1px solid var(--black);

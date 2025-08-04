@@ -75,7 +75,7 @@ function Header() {
                   label="Feedback"
                   isActive={currentPath === "/admin/feedback-list"}
                 />
-                <NavItem to="#" icon="/assets/img/Alerts.png" label="Alerts" />
+                {/* <NavItem to="#" icon="/assets/img/Alerts.png" label="Alerts" /> */}
               </div>
             </div>
 
@@ -147,7 +147,7 @@ function Header() {
                       <h6 style={{ marginBottom: "5px" }}>
                         {staff?.name || "Admin User"}
                       </h6>
-                      <small>{staff?.role || "Admin"}</small>
+                      {/* <small>{staff?.role || "Admin"}</small> */}
                     </div>
 
                     <Link to="/admin/change-password" className="dropdown-item mb-2">

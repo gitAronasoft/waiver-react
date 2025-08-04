@@ -9,6 +9,7 @@ function NewCustomerForm() {
   const customerType = location.state?.customerType || "new"; // "new" is the fallback
   const [showDuplicateNotice, setShowDuplicateNotice] = useState(false);
   const [isChecked, setIsChecked] = useState(true); // ✅ checked by default
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 
@@ -59,16 +60,44 @@ function NewCustomerForm() {
     setMinorList(updated);
   };
 
- const handleSubmit = async (e) => {
+//  const handleSubmit = async (e) => {
+//   e.preventDefault();
+//   const fullData = { ...formData, minors: minorList };
+
+//   try {
+// const response = await axios.post(`${BACKEND_URL}/api/waivers`, fullData);
+
+//     const otp = response.data.otp;
+//     //toast.success("✅ Customer created! OTP sent.");
+//     //  toast.success(`Customer created and OTP sent successfully`);
+//     toast.success(`Customer created and OTP sent successfully. OTP: ${otp}`);
+//     navigate("/opt-verified", {
+//       state: { phone: formData.cell_phone, customerType: "new" },
+//     });
+//    } catch (err) {
+//     if (err.response && err.response.status === 409) {
+//       toast.error("🚫 This phone number already exists. Please use a different number.");
+//       setShowDuplicateNotice(true);
+//     } else if (err.response && err.response.data?.error) {
+//       toast.error(`❌ ${err.response.data.error}`);
+//     } else {
+//       console.error(err);
+//       toast.error("❌ Error submitting form. Please try again.");
+//     }
+//   }
+
+// };
+
+  
+const handleSubmit = async (e) => {
   e.preventDefault();
+  setIsSubmitting(true);
   const fullData = { ...formData, minors: minorList };
 
   try {
-const response = await axios.post(`${BACKEND_URL}/api/waivers`, fullData);
-
+    const response = await axios.post(`${BACKEND_URL}/api/waivers`, fullData);
     const otp = response.data.otp;
-    //toast.success("✅ Customer created! OTP sent.");
-    //  toast.success(`Customer created and OTP sent successfully`);
+
     toast.success(`Customer created and OTP sent successfully. OTP: ${otp}`);
     navigate("/opt-verified", {
       state: { phone: formData.cell_phone, customerType: "new" },
@@ -77,15 +106,20 @@ const response = await axios.post(`${BACKEND_URL}/api/waivers`, fullData);
     if (err.response && err.response.status === 409) {
       toast.error("🚫 This phone number already exists. Please use a different number.");
       setShowDuplicateNotice(true);
-      // navigate("/existing-customer");
+    } else if (err.response && err.response.data?.error) {
+      toast.error(`❌ ${err.response.data.error}`);
     } else {
       console.error(err);
       toast.error("❌ Error submitting form. Please try again.");
     }
+  } finally {
+    setIsSubmitting(false);
   }
 };
 
-  const handleNextClick = () => {
+
+
+const handleNextClick = () => {
     navigate("/existing-customer", {
       state: { phone: formData.cell_phone },
     });
@@ -121,11 +155,11 @@ const response = await axios.post(`${BACKEND_URL}/api/waivers`, fullData);
                   <tbody>
                     <tr>
                       <td>
-                        First Name:<br />
+                        First Name:<span className="required-star">*</span><br />
                         <input type="text" name="first_name" value={formData.first_name} onChange={handleChange} className="form-control"  required/>
                       </td>
                       <td>
-                        Last Name:<br />
+                        Last Name:<span className="required-star">*</span><br />
                         <input type="text" name="last_name" value={formData.last_name} onChange={handleChange} className="form-control" required />
                       </td>
                     <td>
@@ -140,41 +174,41 @@ const response = await axios.post(`${BACKEND_URL}/api/waivers`, fullData);
                     </td>
 
                       <td>
-                        DOB:<br />
+                        DOB:<span className="required-star">*</span><br />
                         <input type="date" name="dob" value={formData.dob} onChange={handleChange} className="form-control" required />
                       </td>
                       <td>
-                        Age:<br />
+                        Age:<span className="required-star">*</span><br />
                         <input type="number" name="age" value={formData.age} onChange={handleChange} className="form-control" required/>
                       </td>
                     </tr>
 
                     <tr>
                       <td colSpan="2">
-                        Address:<br />
+                        Address:<span className="required-star">*</span><br />
                         <input type="text" name="address" value={formData.address} onChange={handleChange} className="form-control" required/>
                       </td>
                       <td>
-                        City:<br />
+                        City:<span className="required-star">*</span><br />
                         <input type="text" name="city" value={formData.city} onChange={handleChange} className="form-control" required/>
                       </td>
                       <td>
-                        Province:<br />
+                        Province:<span className="required-star">*</span><br />
                         <input type="text" name="province" value={formData.province} onChange={handleChange} className="form-control" required/>
                       </td>
                       <td>
-                        Postal Code:<br />
+                        Postal Code:<span className="required-star">*</span><br />
                         <input type="text" name="postal_code" value={formData.postal_code} onChange={handleChange} className="form-control" required/>
                       </td>
                     </tr>
 
                     <tr>
                       <td>
-                        Home Phone:<br />
+                        Home Phone:<span className="required-star">*</span><br />
                         <input type="tel" name="home_phone" value={formData.home_phone} onChange={handleChange} className="form-control" required/>
                       </td>
                       <td>
-                        Cell Phone:<br />
+                        Cell Phone:<span className="required-star">*</span><br />
                         <input type="tel" name="cell_phone" value={formData.cell_phone} onChange={handleChange} className="form-control" required/>
                       </td>
                      <td>
@@ -189,7 +223,7 @@ const response = await axios.post(`${BACKEND_URL}/api/waivers`, fullData);
                     </td>
 
                       <td>
-                        Email:<br />
+                        Email:<span className="required-star">*</span><br />
                         <input type="email" name="email" value={formData.email} onChange={handleChange} className="form-control" />
                       </td>
                       <td>
@@ -343,9 +377,21 @@ const response = await axios.post(`${BACKEND_URL}/api/waivers`, fullData);
                     </span>.
                   </div>
                 )}
-                <button type="submit" className="btn btn-primary w-25">
+                {/* <button type="submit" className="btn btn-primary w-25">
                   Next
-                </button>
+                </button> */}
+
+                <button type="submit" className="btn btn-primary w-25" disabled={isSubmitting}>
+  {isSubmitting ? (
+    <>
+      <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+      Submitting...
+    </>
+  ) : (
+    "Next"
+  )}
+</button>
+
               </div>
             </form>
           </div>
