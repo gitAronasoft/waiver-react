@@ -132,7 +132,7 @@ function Header() {
                       <img
                         src={
                           staff?.profile_image
-                            ? `${BACKEND_URL}${staff.profile_image}`
+                            ? `${BACKEND_URL}/api/${staff.profile_image}`
                             : "/assets/img/Vector.png"
                         }
                         alt="profile"

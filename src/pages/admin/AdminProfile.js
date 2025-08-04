@@ -86,7 +86,7 @@ function AdminProfile() {
                     src={
                       preview ||
                       (admin.profileImage && !(admin.profileImage instanceof File)
-                        ? `${BACKEND_URL}${admin.profileImage}`
+                        ? `${BACKEND_URL}/api/${admin.profileImage}`
                         : "../assets/img/Vector.png")
                     }
                     alt="Profile"
