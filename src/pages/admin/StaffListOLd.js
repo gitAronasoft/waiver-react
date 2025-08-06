@@ -6,17 +6,13 @@ import { useNavigate } from "react-router-dom";
 import Switch from "react-switch";
 import { toast } from "react-toastify";
 import Skeleton from "react-loading-skeleton";
-import "react-loading-skeleton/dist/skeleton.css";
+
 
 function StaffList() {
   const [staff, setStaff] = useState([]);
   const [search, setSearch] = useState("");
   const [filteredStaff, setFilteredStaff] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [showModal, setShowModal] = useState(false);
-  const [selectedStaffId, setSelectedStaffId] = useState(null);
-  const [selectedStaffName, setSelectedStaffName] = useState("");
-
   const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || "http://localhost:5000";
   const navigate = useNavigate();
 
@@ -61,25 +57,15 @@ function StaffList() {
     }
   };
 
-  // Handle Delete Click
-  const handleDeleteClick = (id, name) => {
-    setSelectedStaffId(id);
-    setSelectedStaffName(name);
-    setShowModal(true);
-  };
-
-  // Confirm Delete
-  const confirmDelete = async () => {
+  // Delete Staff
+  const deleteStaff = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this staff member?")) return;
     try {
-      await axios.delete(`${BACKEND_URL}/api/staff/delete-staff/${selectedStaffId}`);
+      await axios.delete(`${BACKEND_URL}/api/staff/delete-staff/${id}`);
       toast.success("Staff deleted successfully");
       fetchStaff();
     } catch (error) {
       toast.error("Failed to delete staff");
-    } finally {
-      setShowModal(false);
-      setSelectedStaffId(null);
-      setSelectedStaffName("");
     }
   };
 
@@ -117,7 +103,7 @@ function StaffList() {
           <i
             className="fas fa-trash"
             style={{ cursor: "pointer", color: "red" }}
-            onClick={() => handleDeleteClick(row.id, row.name)}
+            onClick={() => deleteStaff(row.id)}
           />
         </div>
       ),
@@ -197,27 +183,6 @@ function StaffList() {
           </div>
         </div>
       </div>
-
-      {/* Confirm Delete Modal */}
-      {showModal && (
-        <div className="modal show d-block" tabIndex="-1" style={{ backgroundColor: "rgba(0,0,0,0.5)" }}>
-          <div className="modal-dialog modal-dialog-centered">
-            <div className="modal-content">
-              <div className="modal-header">
-                <h5 className="modal-title">Delete Staff Member</h5>
-                <button type="button" className="btn-close" onClick={() => setShowModal(false)}></button>
-              </div>
-              <div className="modal-body">
-                <p>Are you sure you want to delete <strong>{selectedStaffName}</strong>?</p>
-              </div>
-              <div className="modal-footer">
-                <button className="btn btn-secondary" onClick={() => setShowModal(false)}>Cancel</button>
-                <button className="btn btn-danger" onClick={confirmDelete}>Yes, Delete</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </>
   );
 }

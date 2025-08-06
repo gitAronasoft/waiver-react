@@ -138,7 +138,43 @@ const handleDownloadPDF = async () => {
             </div>
           </div>
         </div>
+ <div class="row"> 
 
+        <div class="col-md-12 mx-auto"> 
+
+                        {customer && (
+  <div className="info-table w-100 border p-3 my-4" style={{ fontSize: "14px" }}>
+    <table cellPadding="8" cellSpacing="0" className="w-100">
+      <tbody>
+        <tr>
+          <td><strong>Participant First Name:</strong><br />{customer.first_name}</td>
+          <td><strong>Participant Last Name:</strong><br />{customer.last_name}</td>
+          <td><strong>Middle Initial:</strong><br />{customer.middle_initial || 'None'}</td>
+          <td><strong>Date of Birth:</strong><br />{customer.dob?.split("T")[0]}</td>
+          <td><strong>Age:</strong><br />{customer.age || '--'}</td>
+        </tr>
+        <tr>
+          <td colSpan="2"><strong>Address:</strong><br />{customer.address}</td>
+          <td><strong>City:</strong><br />{customer.city}</td>
+          <td><strong>Province:</strong><br />{customer.province}</td>
+          <td><strong>Postal Code:</strong><br />{customer.postal_code}</td>
+        </tr>
+        <tr>
+          <td><strong>Home Phone:</strong><br />{customer.home_phone}</td>
+          <td><strong>Cell Phone:</strong><br />{customer.cell_phone}</td>
+          <td><strong>Work Phone:</strong><br />{customer.work_phone}</td>
+          <td><strong>Email:</strong><br />{customer.email || '--'}</td>
+          <td>
+            <strong>Can we email?</strong><br />
+            {customer.can_email ? 'Yes' : 'No'}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+)}
+        </div>
+      </div>
 
         <div class="row"> 
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect  } from "react";
+import React, { useState } from "react";
 import axios from "axios";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { toast } from 'react-toastify';
@@ -89,38 +89,10 @@ function NewCustomerForm() {
 // };
 
   
-// const handleSubmit = async (e) => {
-//   e.preventDefault();
-//   setIsSubmitting(true);
-//   const fullData = { ...formData, minors: minorList };
-
-//   try {
-//     const response = await axios.post(`${BACKEND_URL}/api/waivers`, fullData);
-//     const otp = response.data.otp;
-
-//     toast.success(`Customer created and OTP sent successfully. OTP: ${otp}`);
-//     navigate("/opt-verified", {
-//       state: { phone: formData.cell_phone, customerType: "new" },
-//     });
-//   } catch (err) {
-//     if (err.response && err.response.status === 409) {
-//       toast.error("🚫 This phone number already exists. Please use a different number.");
-//       setShowDuplicateNotice(true);
-//     } else if (err.response && err.response.data?.error) {
-//       toast.error(`❌ ${err.response.data.error}`);
-//     } else {
-//       console.error(err);
-//       toast.error("❌ Error submitting form. Please try again.");
-//     }
-//   } finally {
-//     setIsSubmitting(false);
-//   }
-// };
-
 const handleSubmit = async (e) => {
   e.preventDefault();
   setIsSubmitting(true);
-  const fullData = { ...formData, minors: minorList, send_otp: isChecked };
+  const fullData = { ...formData, minors: minorList };
 
   try {
     const response = await axios.post(`${BACKEND_URL}/api/waivers`, fullData);
@@ -147,30 +119,11 @@ const handleSubmit = async (e) => {
 
 
 
-
 const handleNextClick = () => {
     navigate("/existing-customer", {
       state: { phone: formData.cell_phone },
     });
   };
-
-
-
-useEffect(() => {
-  if (formData.dob) {
-    const dobDate = new Date(formData.dob);
-    const today = new Date();
-    let age = today.getFullYear() - dobDate.getFullYear();
-    const m = today.getMonth() - dobDate.getMonth();
-
-    if (m < 0 || (m === 0 && today.getDate() < dobDate.getDate())) {
-      age--;
-    }
-
-    setFormData((prev) => ({ ...prev, age: age.toString() }));
-  }
-}, [formData.dob]);
-
 
   return (
     <div className="container-fluid">
@@ -399,6 +352,7 @@ useEffect(() => {
       <input
         type="checkbox"
         className="custom-checkbox"
+         name="send_otp"
         checked={isChecked}
         onChange={() => setIsChecked((prev) => !prev)} // ✅ toggle
       />

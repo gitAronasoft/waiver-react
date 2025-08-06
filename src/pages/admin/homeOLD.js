@@ -6,7 +6,6 @@ import { toast } from 'react-toastify';
 function HomePage() {
   const [customers, setCustomers] = useState([]);
   const [selected, setSelected] = useState(null); // { customer, waiverId }
-  const [searchQuery, setSearchQuery] = useState('');
   const staff = JSON.parse(localStorage.getItem("staff")) || {};
   const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
@@ -38,35 +37,21 @@ function HomePage() {
     fetchData();
   }, []);
 
-  const filteredCustomers = customers.filter((c) => {
-    const fullName = `${c.first_name} ${c.last_name}`.toLowerCase();
-    const phone = c.phone_number?.toLowerCase() || '';
-    return (
-      fullName.includes(searchQuery.toLowerCase()) ||
-      phone.includes(searchQuery.toLowerCase())
-    );
-  });
-
   return (
     <>
       <Header />
       <div className="container">
         <div className="row my-4">
           <div className="col-md-4 mx-auto text-center">
-            <h5 className="h5-heading">{filteredCustomers.length} Waiver{filteredCustomers.length !== 1 ? 's' : ''} Completed</h5>
-            <input
-              className="form-control"
-              placeholder="Search Name or Phone Number"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
+            <h5 className="h5-heading">{customers.length} Waiver{customers.length !== 1 ? 's' : ''} Completed</h5>
+            <input className="form-control" placeholder="Search Name or Phone Number" />
           </div>
         </div>
 
         <div className="row">
           <div className="col-md-12">
             <div className="card-grid mb-5">
-              {filteredCustomers.map((c) => (
+              {customers.map((c) => (
                 <PersonCard
                   key={c.id}
                   customer={c}

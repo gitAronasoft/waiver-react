@@ -681,9 +681,15 @@ thead th:last-child {
  background-color: #E7F7E1;
 }
 
+
 .history-table .unconfirmed {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+.history-table .inaccurate {
   background-color: #F9EDEB;
-  color: #FD513B;
+  color: #FF0000;
 }
 
 

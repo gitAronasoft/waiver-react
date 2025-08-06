@@ -92,7 +92,7 @@ const AdminFeedbackPage = () => {
         <tr key={i}>
           <td><Skeleton width={30} /></td>
           <td><Skeleton width={100} /></td>
-          <td><Skeleton width={60} /></td>
+          <td><Skeleton width={200} /></td>
           <td><Skeleton width={80} /></td>
           <td><Skeleton width={100} /></td>
           <td><Skeleton width={200} /></td>

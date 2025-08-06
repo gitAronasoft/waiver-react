@@ -175,7 +175,9 @@ function App() {
         <Route path="/complete" element={<WaiverCompleteScreen />} />
         <Route path="/all-done" element={<AllDone />} />
         <Route path="/rate/:id" element={<StarRating />} />
-        <Route path="/feedback/:id" element={<Feedback />} />
+        {/* <Route path="/feedback/:id" element={<Feedback />} /> */}
+        <Route path="/feedback" element={<Feedback />} />
+
       </Routes>
     </Router>
   );

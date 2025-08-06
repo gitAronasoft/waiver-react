@@ -1,11 +1,18 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useLocation } from 'react-router-dom'; // ✅ make sure to import useLocation
 import axios from 'axios';
 import { toast, ToastContainer } from 'react-toastify';
 
-
 export default function FeedbackPage() {
-  const { id } = useParams();
+  const query = new URLSearchParams(useLocation().search);
+const userId = query.get('userId');
+const feedbackId = query.get('feedbackId');
+
+  // const { userId } =  query.get('userId'); // user ID
+
+  // const query = new URLSearchParams(location.search);
+  // const feedbackId = query.get('feedbackId'); // ✅ get feedback ID from query string
+  const location = useLocation(); // ✅ initialize useLocation
   const [feedback, setFeedback] = useState('');
   const [submitted, setSubmitted] = useState(false);
   const [customerName, setCustomerName] = useState('');
@@ -15,40 +22,41 @@ export default function FeedbackPage() {
 
   useEffect(() => {
     axios
-      .get(`${BACKEND_URL}/api/waivers/rate/${id}`)
+      .get(`${BACKEND_URL}/api/waivers/rate/${userId}`)
       .then((res) => {
-         const { first_name, last_name } = res.data;
-      setCustomerName(`${first_name} ${last_name}`);
+        const { first_name, last_name } = res.data;
+        setCustomerName(`${first_name} ${last_name}`);
       })
       .catch((err) => console.error('Failed to fetch customer name:', err));
-  }, [id]);
+  }, [userId]);
 
- const handleSubmit = async (e) => {
-  e.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  try {
-    await axios.post(`${BACKEND_URL}/api/waivers/feedback`, {
-      id,
-      issue,
-      staffName,
-      message: feedback,
-    });
+    try {
+      await axios.post(`${BACKEND_URL}/api/waivers/feedback`, {
+        userId,
+        feedbackId,
+        issue,
+        staffName,
+        message: feedback,
+      });
 
-    await axios.post(`${BACKEND_URL}/api/waivers/send-feedback`, {
-      id,
-      message: `
-        Issue: ${issue}
-        Staff Name: ${staffName}
-        Comments: ${feedback}
-      `
-    });
+      await axios.post(`${BACKEND_URL}/api/waivers/send-feedback`, {
+        userId,
+        feedbackId,
+        issue,
+        staffName,
+        message: feedback
+       
+      });
 
-    toast.success('Feedback submitted successfully!');
-    setSubmitted(true);
-  } catch (err) {
-    toast.error('Failed to send feedback. Try again later.');
-  }
-};
+      toast.success('Feedback submitted successfully!');
+      setSubmitted(true);
+    } catch (err) {
+      toast.error('Failed to send feedback. Try again later.');
+    }
+  };
 
   return (
     <>
@@ -117,7 +125,7 @@ export default function FeedbackPage() {
                         />
                       </div>
 
-                      <button className="btn btn-primary " type="submit">
+                      <button className="btn btn-primary" type="submit">
                         Submit Feedback
                       </button>
                     </form>

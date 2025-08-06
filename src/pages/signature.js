@@ -286,6 +286,44 @@ function Signature() {
             </div>
           </div>
         </div>
+        
+      <div class="row"> 
+
+        <div class="col-md-12 mx-auto"> 
+
+                        {customerData && (
+  <div className="info-table w-100 border p-3 my-4" style={{ fontSize: "14px" }}>
+    <table cellPadding="8" cellSpacing="0" className="w-100">
+      <tbody>
+        <tr>
+          <td><strong>Participant First Name:</strong><br />{customerData.first_name}</td>
+          <td><strong>Participant Last Name:</strong><br />{customerData.last_name}</td>
+          <td><strong>Middle Initial:</strong><br />{customerData.middle_initial || 'None'}</td>
+          <td><strong>Date of Birth:</strong><br />{customerData.dob?.split("T")[0]}</td>
+          <td><strong>Age:</strong><br />{customerData.age || '--'}</td>
+        </tr>
+        <tr>
+          <td colSpan="2"><strong>Address:</strong><br />{customerData.address}</td>
+          <td><strong>City:</strong><br />{customerData.city}</td>
+          <td><strong>Province:</strong><br />{customerData.province}</td>
+          <td><strong>Postal Code:</strong><br />{customerData.postal_code}</td>
+        </tr>
+        <tr>
+          <td><strong>Home Phone:</strong><br />{customerData.home_phone}</td>
+          <td><strong>Cell Phone:</strong><br />{customerData.cell_phone}</td>
+          <td><strong>Work Phone:</strong><br />{customerData.work_phone}</td>
+          <td><strong>Email:</strong><br />{customerData.email || '--'}</td>
+          <td>
+            <strong>Can we email?</strong><br />
+            {customerData.can_email ? 'Yes' : 'No'}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+)}
+        </div>
+      </div>
 
                      <div class="row"> 
 

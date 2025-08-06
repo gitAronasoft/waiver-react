@@ -708,7 +708,7 @@ thead th:last-child {
 }
 
 .confirmed,
-.unconfirmed {
+.unconfirmed, .inaccurate{
   display: inline-block;
   text-align: center;
   min-width: 120px; /* or use fixed width if you prefer */
@@ -722,8 +722,13 @@ thead th:last-child {
 }
 
 .history-table .unconfirmed {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+.history-table .inaccurate {
   background-color: #F9EDEB;
-  color: #FD513B;
+  color: #FF0000;
 }
 
 

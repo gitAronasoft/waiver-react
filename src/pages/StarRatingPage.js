@@ -26,21 +26,38 @@ useEffect(() => {
     setRating(rate);
     setSubmitted(true);
 
+    // try {
+    //   // await axios.post(`/api/waivers/rate/${id}`, { rating: rate });
+    //   await axios.post(`${BACKEND_URL}/api/waivers/rate/${id}`, { rating: rate });
+      
+    //   // Redirect after a short delay
+    //   setTimeout(() => {
+    //     if (rate === 5) {
+    //       window.location.href = 'https://g.page/YOUR_GOOGLE_REVIEW_LINK';
+    //     } else {
+    //       navigate(`/feedback/${id}`);
+    //     }
+    //   }, 1500);
+    // } catch (error) {
+    //   console.error('Rating submission error:', error);
+    // }
     try {
-      // await axios.post(`/api/waivers/rate/${id}`, { rating: rate });
-      await axios.post(`${BACKEND_URL}/api/waivers/rate/${id}`, { rating: rate });
+  const response = await axios.post(`${BACKEND_URL}/api/waivers/rate/${id}`, { rating: rate });
+  const feedbackId = response.data.feedbackId;
 
-      // Redirect after a short delay
-      setTimeout(() => {
-        if (rate === 5) {
-          window.location.href = 'https://g.page/YOUR_GOOGLE_REVIEW_LINK';
-        } else {
-          navigate(`/feedback/${id}`);
-        }
-      }, 1500);
-    } catch (error) {
-      console.error('Rating submission error:', error);
+  setTimeout(() => {
+    if (rate === 5) {
+      window.location.href = 'https://g.page/YOUR_GOOGLE_REVIEW_LINK';
+    } else {
+      // Navigate with user id and feedback id
+      navigate(`/feedback?userId=${id}&feedbackId=${feedbackId}`);
+
     }
+  }, 1000);
+} catch (error) {
+  console.error('Rating error:', error);
+}
+
   };
 
   return (
