@@ -107,59 +107,59 @@ function ConfirmCustomerInfo() {
                     <tr>
                       <td>
                         Participant First Name:<br />
-                        <input type="text" name="first_name" value={formData.first_name || ""} onChange={handleChange} className="form-control" />
+                        <input type="text" name="first_name" value={formData.first_name || ""} onChange={handleChange} className="form-control" readOnly/>
                       </td>
                       <td>
                         Participant Last Name:<br />
-                        <input type="text" name="last_name" value={formData.last_name || ""} onChange={handleChange} className="form-control" />
+                        <input type="text" name="last_name" value={formData.last_name || ""} onChange={handleChange} className="form-control" readOnly />
                       </td>
                       <td>
                         Middle Initial:<br />
-                        <input type="text" name="middle_initial" value={formData.middle_initial || ""} onChange={handleChange} className="form-control" />
+                        <input type="text" name="middle_initial" value={formData.middle_initial || ""} onChange={handleChange} className="form-control" readOnly />
                       </td>
                       <td>
                         Date of Birth:<br />
-                        <input type="date" name="dob" value={formData.dob || ""} onChange={handleChange} className="form-control" />
+                        <input type="date" name="dob" value={formData.dob || ""} onChange={handleChange} className="form-control" readOnly/>
                       </td>
                       <td>
                         Age:<br />
-                        <input type="number" name="age" value={formData.age || ""} onChange={handleChange} className="form-control" />
+                        <input type="number" name="age" value={formData.age || ""} onChange={handleChange} className="form-control" readOnly/>
                       </td>
                     </tr>
                     <tr>
                       <td colSpan="2">
                         Address:<br />
-                        <input type="text" name="address" value={formData.address || ""} onChange={handleChange} className="form-control" />
+                        <input type="text" name="address" value={formData.address || ""} onChange={handleChange} className="form-control" readOnly/>
                       </td>
                       <td>
                         City:<br />
-                        <input type="text" name="city" value={formData.city || ""} onChange={handleChange} className="form-control" />
+                        <input type="text" name="city" value={formData.city || ""} onChange={handleChange} className="form-control" readOnly/>
                       </td>
                       <td>
                         Province:<br />
-                        <input type="text" name="province" value={formData.province || ""} onChange={handleChange} className="form-control" />
+                        <input type="text" name="province" value={formData.province || ""} onChange={handleChange} className="form-control" readOnly/>
                       </td>
                       <td>
                         Postal Code:<br />
-                        <input type="text" name="postal_code" value={formData.postal_code || ""} onChange={handleChange} className="form-control" />
+                        <input type="text" name="postal_code" value={formData.postal_code || ""} onChange={handleChange} className="form-control" readOnly/>
                       </td>
                     </tr>
                     <tr>
                       <td>
                         Home Phone:<br />
-                        <input type="tel" name="home_phone" value={formData.home_phone || ""} onChange={handleChange} className="form-control" />
+                        <input type="tel" name="home_phone" value={formData.home_phone || ""} onChange={handleChange} className="form-control" readOnly/>
                       </td>
                       <td>
                         Cell Phone:<br />
-                        <input type="tel" name="cell_phone" value={formData.cell_phone || ""} onChange={handleChange} className="form-control" />
+                        <input type="tel" name="cell_phone" value={formData.cell_phone || ""} onChange={handleChange} className="form-control" readOnly/>
                       </td>
                       <td>
                         Work Phone:<br />
-                        <input type="tel" name="work_phone" value={formData.work_phone || ""} onChange={handleChange} className="form-control" />
+                        <input type="tel" name="work_phone" value={formData.work_phone || ""} onChange={handleChange} className="form-control" readOnly/>
                       </td>
                       <td>
                         Email:<br />
-                        <input type="email" name="email" value={formData.email || ""} onChange={handleChange} className="form-control" />
+                        <input type="email" name="email" value={formData.email || ""} onChange={handleChange} className="form-control" readOnly/>
                       </td>
                       <td>
                         Can we email?<br />

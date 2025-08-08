@@ -52,28 +52,85 @@ function ProfilePage() {
   //   }
   // };
 
+// const handleDownloadPDF = async () => {
+//   try {
+//     const input = pdfRef.current;
+
+//     const canvas = await html2canvas(input, {
+//       scale: 1,
+//       useCORS: true,
+//       scrollY: -window.scrollY,
+//     });
+
+//     const pdf = new jsPDF("p", "mm", "a4");
+
+//     const margin = 10;
+//     const pageWidth = pdf.internal.pageSize.getWidth();   // 210mm
+//     const pageHeight = pdf.internal.pageSize.getHeight(); // 297mm
+//     const usableWidth = pageWidth - margin * 2;
+//     const usableHeight = pageHeight - margin * 2;
+
+//     const imgWidth = usableWidth;
+//     const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+//     const pageCanvasHeight = (usableHeight * canvas.width) / imgWidth; // height of each slice in px
+
+//     let renderedHeight = 0;
+//     let pageIndex = 0;
+
+//     while (renderedHeight < canvas.height) {
+//       const pageCanvas = document.createElement("canvas");
+//       pageCanvas.width = canvas.width;
+//       pageCanvas.height = Math.min(pageCanvasHeight, canvas.height - renderedHeight);
+
+//       const context = pageCanvas.getContext("2d");
+//       context.drawImage(
+//         canvas,
+//         0,
+//         renderedHeight,
+//         canvas.width,
+//         pageCanvas.height,
+//         0,
+//         0,
+//         canvas.width,
+//         pageCanvas.height
+//       );
+
+//       const pageData = pageCanvas.toDataURL("image/png");
+//       if (pageIndex > 0) pdf.addPage();
+//       pdf.addImage(pageData, "PNG", margin, margin, imgWidth, (pageCanvas.height * imgWidth) / canvas.width);
+
+//       renderedHeight += pageCanvasHeight;
+//       pageIndex++;
+//     }
+
+//     pdf.save(`waiver-${id}.pdf`);
+//   } catch (err) {
+//     console.error("PDF generation failed", err);
+//   }
+// };
+
 const handleDownloadPDF = async () => {
   try {
     const input = pdfRef.current;
 
+    // Lower scale to reduce resolution (and file size)
     const canvas = await html2canvas(input, {
-      scale: 2,
+      scale: 0.8,
       useCORS: true,
       scrollY: -window.scrollY,
     });
 
     const pdf = new jsPDF("p", "mm", "a4");
-
     const margin = 10;
-    const pageWidth = pdf.internal.pageSize.getWidth();   // 210mm
+    const pageWidth = pdf.internal.pageSize.getWidth(); // 210mm
     const pageHeight = pdf.internal.pageSize.getHeight(); // 297mm
     const usableWidth = pageWidth - margin * 2;
     const usableHeight = pageHeight - margin * 2;
 
     const imgWidth = usableWidth;
     const imgHeight = (canvas.height * imgWidth) / canvas.width;
-
-    const pageCanvasHeight = (usableHeight * canvas.width) / imgWidth; // height of each slice in px
+    const pageCanvasHeight = (usableHeight * canvas.width) / imgWidth;
 
     let renderedHeight = 0;
     let pageIndex = 0;
@@ -96,9 +153,18 @@ const handleDownloadPDF = async () => {
         pageCanvas.height
       );
 
-      const pageData = pageCanvas.toDataURL("image/png");
+      // Use JPEG with quality 0.7 to reduce size
+      const pageData = pageCanvas.toDataURL("image/jpeg", 0.7);
+
       if (pageIndex > 0) pdf.addPage();
-      pdf.addImage(pageData, "PNG", margin, margin, imgWidth, (pageCanvas.height * imgWidth) / canvas.width);
+      pdf.addImage(
+        pageData,
+        "JPEG",
+        margin,
+        margin,
+        imgWidth,
+        (pageCanvas.height * imgWidth) / canvas.width
+      );
 
       renderedHeight += pageCanvasHeight;
       pageIndex++;
@@ -109,7 +175,6 @@ const handleDownloadPDF = async () => {
     console.error("PDF generation failed", err);
   }
 };
-
 
 
   if (isLoading) return <div className="text-center mt-5">Loading...</div>;
@@ -141,7 +206,9 @@ const handleDownloadPDF = async () => {
  <div class="row"> 
 
         <div class="col-md-12 mx-auto"> 
-
+   <p>
+  BY SIGNING THIS DOCUMENT, YOU WILL WAIVE OR GIVE UP CERTAIN LEGAL RIGHTS INCLUDING THE RIGHT TO SUE OR CLAIM COMPENSATION FOLLOWING AN ACCIDENT - <strong>PLEASE READ CAREFULLY</strong>
+</p>
                         {customer && (
   <div className="info-table w-100 border p-3 my-4" style={{ fontSize: "14px" }}>
     <table cellPadding="8" cellSpacing="0" className="w-100">
@@ -179,43 +246,86 @@ const handleDownloadPDF = async () => {
         <div class="row"> 
 
                         <div class="col-md-12 mx-auto"> 
-                            <p> BY SIGNING THIS DOCUMENT, YOU WILL WAIVE OR GIVE UP CERTAIN LEGAL RIGHTS INCLUDING THE RIGHT TO SUE OR CLAIM COMPENSATION FOLLOWING AN ACCIDENT - PLEASE READ CAREFULLY</p>
-                            <p class="fs-6"> In consideration of being allowed to use the services, equipment, and facilities at 4WHEELS etc. (“4W”), I hereby acknowledge and agree to the following terms and conditions:</p>
+                              
+                            <p class="fs-6"> In consideration of being allowed to use the services, equipment, and facilities of Skate & Play Inc. (“SPI”), I hereby acknowledge 
+and agree to the following terms and conditions: </p> <br></br>
 
-                            <p> I ACKNOWLEDGE RISKS: </p>
+                           <h6><strong>ASSUMPTION OF RISK:</strong> </h6>
+                           <p>I hereby acknowledge, accept and agree that the use of or participation in SPIs Activities, as hereinafter defined, including the 
+rink, and related activities, <strong>and the use of SPI’s services, equipment, and facilities </strong> is inherently dangerous which may result 
+in serious injury or death resulting from my own actions, the actions of others, <strong>improper use of equipment, equipment 
+failures, failure to act safely within one’s own ability, negligence of other persons, negligent first aid and negligence </strong>
+on the part of the SPI. I understand that negligence includes failure on the part of SPI to take reasonable steps to safeguard or 
+protect me from the risks, dangers and hazards of participating in SPI’s Activities. I freely accept and fully assume all risks, 
+dangers and hazards associated with SPI Activities and the possibility of personal injury, death, property damage or loss 
+resulting therefrom. I have received full information regarding SPI’s services, equipment, and facilities and have had the 
+opportunity to ask any questions I may have regarding same. </p><br></br>
 
-                            <p> I understand, accept and agree that the use of or participation in 4W’s Activities, as herein defined, including the rink, and related activities, and the use of 4W’s services, equipment, and facilities involves risks, dangers and hazards which may result in serious injury or death resulting from any number of risks, as described in this waiver, including use of equipment, equipment failure, collision with surfaces or an obstacle, negligence of other persons, negligence of staff and negligence on the part of the 4W. I understand that negligence includes failure on the part of 4W to take reasonable steps to safeguard or protect me from the risks, dangers and hazards of participation in 4W’s Activities. I freely accept and fully assume all such risks, dangers and hazards, and the possibility of personal injury, death, property damage or loss resulting therefrom. The risks associated with participation of any 4W services, equipment, and facilities can involve activities that have the opportunity to cause participants to lose balance, trip, or collide with surfaces, structures, or other people.</p>
+                            <h6><strong>MEDICAL CONDITION: </strong> </h6>
+                            <p>Participation in a session may place unusual stresses on the body and is not recommended for persons suffering from asthma, 
+epilepsy, cardio disorders, respiratory disorders, hypertension, skeletal, joint or ligament problems or conditions, and certain 
+mental illnesses. Women who are pregnant or suspect they are pregnant and persons who have consumed alcohol or are 
+otherwise intoxicated are not recommended to engage in activities.</p>
 
-                            <p> MEDICAL CONDITION: </p>
+                            <p class="my-4"> <strong><strong>{`${customer.first_name} ${customer.last_name}` || "_______"}</strong></strong>&nbsp;&nbsp;  I agree that I will be responsible for property damage as a result of any unauthorized activity. </p>
+                           
 
-                            <p>
-                                Participation in 4W’s services and/or use of its equipment or facilities is not recommended for persons suffering from asthma, epilepsy, cardiac disorders, respiratory disorders, hypertension, skeletal, joint or ligament problems, or conditions involving physical or mental limitations. Participation is also not recommended or suggested for pregnant persons or persons who have consumed alcohol or are otherwise intoxicated or not in a good state of mind, or on drugs or narcotics.
+                            <p class="paragraph-heading"> RELEASE OF LIABILITY, WAIVER OF CLAIMS AND INDEMNITY AGREEMENT </p><br></br>
 
-                                <p class="my-4"> <strong>{`${customer.first_name} ${customer.last_name}` || "_______"}</strong> I agree that I will not be responsible for property damage as a result of any unauthorized activity. </p>
-                            </p>
+                           <p>In consideration of SPI agreeing to my participation, and permitting my use of SPIs equipment, room, and other facilities I hereby agree 
+as follows: </p><br></br>
 
-                            <p class="paragraph-heading"> RELEASE OF LIABILITY, WAIVER OF CLAIMS AND INDEMNITY AGREEMENT </p>
-
-                            <p> In consideration of 4W agreeing to my participation and permitting my use of 4W’s equipment, room and/or other facilities I hereby agree as follows:</p>
-
-                            <p class="paragraph-heading"> In this Release Agreement the term “Activities” shall include all activities, lessons, events, orientations, instruction sessions, competitions and services provided, arranged, organized, sponsored or authorized by 4W</p>
+                            <p class="paragraph-heading"> In this Release Agreement the term “Activities” shall include all activities, functions, events, orientations, 
+instruction sessions, competitions and services provided, arranged, organized, sponsored or authorized by SPI </p>
 
 
-                            <p class="my-4"> <span class="paragraph-heading"> TO WAIVE ANY AND ALL CLAIMS AND TO RELEASE 4W </span> from any and all liability for any loss, cost, damage, expense, or injury including death to myself or others that I may incur in my suite, due to any cause whatsoever while participating in any Activity including but not limited to negligence, breach of contract or breach of any statutory or other duty on the part of 4W. I understand that negligence includes the failure of the 4W to take any reasonable steps to safeguard or protect me from the risks, dangers and hazards of the Activities. I understand that negligence includes the failure on the part of 4W to take reasonable steps to safeguard or protect me from the risks.</p> 
+                            <p class="my-4"> <span class="paragraph-heading"> TO WAIVE ANY AND ALL CLAIMS AND TO RELEASE SPI </span>  from any and all liability for any loss, cost, damage, expense, or 
+injury including death that I may suffer, or that my next of kin may suffer, due to any cause whatsoever during participation in any 
+Activity including as a result of: negligence, breach of contract, or breach of any statutory or other duty care on the part of SPI in 
+respect of the provision of or the failure to provide any warnings, ,<strong>failure of equipment,</strong> directions or instructions as to the 
+Activities or the risks, dangers and hazards of participating in the Activities. I understand that negligence includes the failure on the 
+part of SPI to take reasonable steps to safeguard or protect me from the risks.</p> 
 
-                            <p> <span class="paragraph-heading"> TO HOLD HARMLESS AND INDEMNIFY 4W </span> from any and all liability for any property damage or personal injury to any third party resulting from any of my actions.</p>
+                            <p> <span class="paragraph-heading"> TO HOLD HARMLESS AND INDEMNIFY SPI </span> from any and all liability for any property damage or personal injury to any third 
+party resulting from any of my actions. </p><br></br>
 
-                            <p> This waiver shall be effective in the Province of Ontario and binding upon my heirs, next of kin, executors, and administrators in the event of death. My heir or incapacity.</p>
+                            <p> This waiver shall be effective in the Province of Ontario and binding upon my heirs, next of kin, executors, and administrators in the 
+event of death, injury or incapacity. </p><br></br><br></br><br></br>
 
-                            <p> Any litigation involving the parties to this document shall be brought within the Province of Ontario and shall be within the exclusive jurisdiction of the Courts located in the City of Ottawa.</p>
+                            <p> Any litigation involving the parties to this document shall be brought solely within the Province of Ontario and shall be within the 
+exclusive jurisdiction of the Courts residing in the City of Ottawa. </p>
 
-                            <p class="my-4"> <strong>{`${customer.first_name} ${customer.last_name}` || "_______"}</strong>  Initial I consent to photographs and videos being taken of me during my participation at 4WI, and to the publication of the photographs and videos for advertising, promotional, and marketing purposes. I waive any and all claims against 4WI arising out of 4WI’s use of my photographic or video representation of me, including claims relating to defamation or invasion of any copyright, privacy, personality or publicity rights. I agree not to claim compensation from 4WI for the use of photographic or video representation of me during my participation in 4WI’s Activities. </p>
+                            <p class="my-4"><strong><strong>{`${customer.first_name} ${customer.last_name}` || "_______"}</strong></strong>&nbsp;&nbsp; <strong>  PHOTOGRAPH / VIDEO RELEASEInitial</strong>&nbsp;&nbsp;   I consent to photographs and videos being taken of me during my 
+participation at SPI, and to the publication of the photographs and videos for advertising, promotional, and marketing purposes. I 
+waive any and all claims against SPI arising out of SPI’s use of my photographic or video representation of me, including claims 
+relating to defamation or invasion of any copyright, privacy, personality or publicity rights. I agree not to claim compensation from 
+SPI for the use of photographic or video representation of me during my participation in SPI’s Activities. 
+ </p>
 
-                            <p class="my-4"> In entering into the waiver, I am not relying on any oral or written representations or statements made my 4WI with respect to the safety of the rooms other than what is set forth in this waiver. </p>
+                            <p class="my-4"><strong><strong>{`${customer.first_name} ${customer.last_name}` || "_______"}</strong></strong>&nbsp;&nbsp;  You agree that skating while under the influence of alcohol or any other drugs is strictly prohibited, as it significantly 
+increases the risk of injury to yourself and others.  </p>
 
-                            <p class="my-4"> BY COMPLETING THIS FORM I HEREBY ACKNOWLEDGE THAT I AM NOT INTOXICATED NOR HAVE I CONSUMED ANY OTHER SUBSTANCES THAT MAY RESULT IN MY JUDGEMENT BEING IMPAIRED. I HEREBY ASSUME FULL RESPONSIBILITY FOR MY ACTIONS, RISKS, DANGERS, AND HAZARDS RESULTING FROM THE USE OF THE FACILITIES AND PARTICIPATION THE ACTIVITIES WHILE UNDER THE INFLUENCE OF ALCOHOL OR MIND ALTERING SUBSTANCES. I UNDERSTAND THAT AM GIVING UP CERTAIN RIGHTS WHICH I OR MY HEIRS, NEXT OF KIN, EXECUTORS, ADMINISTRATORS AND ASSIGNS MAY HAVE. THAT I AM AT LEAST 18 YEARS OLD AS OF THE DAY THIS FORM WAS FILLED OUT. I FREELY ACCEPT AND ASSUME ALL RISKS, DANGERS AND HAZARDS AND THE POSSIBILITY OF RESULTING PERSONAL INJURY, DEATH, PROPERTY DAMAGE OR LOSS DIRECTLY OR INDIRECTLY ASSOCIATED WITH MY PARTICIPATION IN THE ACTIVITY. I HAVE READ THIS RELEASE AGREEMENT AND FULLY UNDERSTAND ITS CONTENTS AND VOLUNTARILY AGREE TO ITS TERMS </p>
+  <p class="my-4"><strong>{`${customer.first_name} ${customer.last_name}` || "_______"}</strong>&nbsp;&nbsp;  We encourage everyone to wear protective gear. You understand that Skate & Play Inc. has encouraged you to wear 
+full protective gear, and by waiving that right, you acknowledge and accept all associated risks.   </p>
 
-                            <p class="my-4"> I CONFIRM THAT I HAVE READ AND UNDERSTAND THIS WAIVER PRIOR TO SIGNING IT, AND I AM AWARE THAT BY SIGNING THIS WAIVER I AM WAIVING CERTIAN LEGAL RIGHTS WHICH I OR MY HEIRS, NEXT OF KIN, EXECUTORS, AND ADMINISTRATORS MAY HAVE AGAINST 4WHEELIES INC. </p> 
+
+                            <p class="my-4"> In entering into the waiver, I am not relying on any oral or written representations or statements made my SPI with respect to the 
+safety of the rooms other than what is set forth in this waiver.  </p>
+
+                            <p class="my-4"> BY COMPLETING THIS FORM I HEREBY ACKNOWLEDGE THAT I AM NOT INTOXICATED NOR HAVE I CONSUMED ANY 
+OTHER SUBSTANCES THAT MAY RESULT IN MY JUDGEMENT BEING IMPAIRED. I HEREBY ASSUME FULL 
+RESPONSIBILITY FOR MY ACTIONS, RISKS, DANGERS, AND HAZARDS RESULTING FROM THE USE OF THE FACILITIES 
+AND PARTICIPATION THE ACTIVITIES WHILE UNDER THE INFLUENCE OF ALCOHOL OR MIND ALTERING 
+SUBSTANCES. I UNDERSTAND THAT AM GIVING UP CERTAIN RIGHTS WHICH I OR MY HEIRS, NEXT OF KIN, 
+EXECUTORS, ADMINISTRATORS AND ASSIGNS MAY HAVE. THAT I AM AT LEAST 18 YEARS OLD AS OF THE DAY THIS 
+FORM WAS FILLED OUT. I FREELY ACCEPT AND ASSUME ALL RISKS, DANGERS AND HAZARDS AND THE POSSIBILITY 
+OF RESULTING PERSONAL INJURY, DEATH, PROPERTY DAMAGE OR LOSS DIRECTLY OR INDIRECTLY ASSOCIATED 
+WITH MY PARTICIPATION IN THE ACTIVITY. I HAVE READ THIS RELEASE AGREEMENT AND FULLY UNDERSTAND ITS 
+CONTENTS AND VOLUNTARILY AGREE TO ITS TERMS  </p> 
+
+<p> <span class="paragraph-heading">I CONFIRM THAT I HAVE READ AND UNDERSTAND THIS WAIVER PRIOR TO SIGNING IT, AND I AM AWARE THAT BY 
+SIGNING THIS WAIVER I AM WAIVING CERTIAN LEGAL RIGHTS WHICH I OR MY HEIRS, NEXT OF KIN, EXECUTORS, 
+AND ADMINISTRATORS MAY HAVE AGAINST SKATE & PLAY INC. </span> </p>
 
 
 <div>
@@ -275,23 +385,6 @@ const handleDownloadPDF = async () => {
 
 
 
-            <div className="confirm-box mt-4 mb-3">
-              <label className="custom-checkbox-wrapper">
-               <input
-  type="checkbox"
-  className="custom-checkbox"
-  name="consented"
-  checked
-/>
-
-                <span className="custom-checkbox-label">
-                  <h5>
-                    By checking this box, you confirm signing for yourself and all listed minors or
-                    dependents above, as of the provided date.
-                  </h5>
-                </span>
-              </label>
-            </div>
 {waiverHistory.length > 0 && waiverHistory[0].signature_image ? (
   <div style={{ textAlign: "center", marginTop: "20px" }}>
     <img
@@ -307,6 +400,31 @@ const handleDownloadPDF = async () => {
     <p>No signature available.</p>
   </div>
 )}
+
+ 
+<div style={{ fontFamily: 'Arial, sans-serif', fontSize: '14px', maxWidth: '800px', margin: '20px auto' }}>
+  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '40px' }}>
+    <div style={{ width: '48%' }}>
+      <label>DATE__________________________________</label>
+      <div style={{ marginTop: '30px' }}>__________________________________<br /><small>Signature</small></div>
+      <div style={{ marginTop: '30px' }}>__________________________________<br /><small>Printed Name</small></div>
+    </div>
+    <div style={{ width: '48%' }}>
+      <br />
+      <div>__________________________________<br /><small>Signature or Witness</small></div>
+      <div style={{ marginTop: '30px' }}>__________________________________<br /><small>Printed Name or Witness</small></div>
+    </div>
+  </div>
+
+  <div style={{ border: '1px solid black', padding: '10px' }}>
+    <p style={{ fontWeight: 'bold', textAlign: 'center' }}>
+      PLEASE COMPLETE IF THE PARTICIPANT IS UNDER THE AGE OF 18
+    </p>
+    <p>DATE OF BIRTH: __________________________________</p>
+    <p>PARENT/GUARDIAN'S NAME: ____________________________</p>
+    <p>PARENT/GUARDIAN SIGNATURE: ____________________________</p>
+  </div>
+</div>
 
 
     

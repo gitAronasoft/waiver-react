@@ -82,7 +82,7 @@ function RuleReminder() {
             <div className="list-style text-start">
               <ul className="d-flex flex-column">
                 <li>Everyone entering the facility must pay</li>
-                <li>Toe-stoppers required</li>
+                {/* <li>Toe-stoppers required</li> */}
                 <li>No outside food or drinks</li>
                 <li>Respect the direction of rotation on the rink: no crossing</li>
                 <li>Be considerate of others' speed and learning</li>
