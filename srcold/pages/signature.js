@@ -513,9 +513,7 @@ const generatePDF = async () => {
                           navigate("/confirm-info", { state: { phone, customerType } });
                         }
                       }}>
-                         
                         <img src="/assets/img/image 298.png" className="img-fluid" alt="back" /> BACK
-                       
                       </div>
           </div>
 

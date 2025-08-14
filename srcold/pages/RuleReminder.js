@@ -27,7 +27,7 @@ function RuleReminder() {
     <div className="container-fluid">
       <div className="container text-center">
         <div className="row">
-          <div className="col-md-2 ">
+          <div className="col-md-2">
             <div
               className="back-btn"
               style={{ cursor: "pointer" }}
@@ -59,19 +59,19 @@ function RuleReminder() {
         </div>
 
         <div className="row mt-4">
-          <div className="col-12 col-md-12  mx-auto">
+          <div className="col-md-11 mx-auto">
             <div className="d-flex justify-content-between align-items-center rule-images my-3 flex-wrap gap-3">
-              <div className="d-flex flex-column align-items-center">
+              <div>
                 <img src="/assets/img/image 302 (1).png" alt="On the Rink" />
                 <h5>ON THE RINK</h5>
               </div>
-              <div  className="d-flex flex-column align-items-center">
+              <div>
                 <img src="/assets/img/image 303.png" alt="No speedskating" />
                 <h5>
                   NO speedskating <br /> or rollerblade
                 </h5>
               </div>
-              <div  className="d-flex flex-column align-items-center">
+              <div>
                 <img src="/assets/img/image 304 (2).png" alt="Helmet" />
                 <h5>
                   Children under 13 <br /> must wear a helmet

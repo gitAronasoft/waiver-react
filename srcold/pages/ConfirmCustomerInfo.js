@@ -161,7 +161,7 @@ function ConfirmCustomerInfo() {
                         Email:<br />
                         <input type="email" name="email" value={formData.email || ""} onChange={handleChange} className="form-control" readOnly/>
                       </td>
-                      <td className="custom-email-label">
+                      <td>
                         Can we email?<br />
                         <label>
                           <input type="radio" name="can_email" value="true" checked={formData.can_email === true} onChange={() => setFormData((p) => ({ ...p, can_email: true }))} /> Yes

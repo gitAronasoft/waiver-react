@@ -136,7 +136,7 @@ function NewCustomerForm() {
 
         <div className="row">
           <div className="col-md-12 col-xl-10 mx-auto">
-            <h3 className="h5-heading">Your details </h3>
+            <h3 className="h5-heading">Your details</h3>
             <form onSubmit={handleSubmit}>
               <div className="info-table w-100">
                 <table cellPadding="8" cellSpacing="0">
@@ -200,13 +200,12 @@ function NewCustomerForm() {
                         Email:<span className="required-star">*</span><br />
                         <input type="email" name="email" value={formData.email} onChange={handleChange} className="form-control" />
                       </td>
-                      <td className="custom-email-label">
+                      <td>
                         Can we email?<br />
                         <label>
                           <input
                             type="radio"
                             name="can_email"
-                            className="custom_email"
                             checked={formData.can_email === true}
                             onChange={() => setFormData((p) => ({ ...p, can_email: true }))}
                           />{" "}
@@ -216,7 +215,6 @@ function NewCustomerForm() {
                           <input
                             type="radio"
                             name="can_email"
-                            className="custom_email"
                             checked={formData.can_email === false}
                             onChange={() => setFormData((p) => ({ ...p, can_email: false }))}
                           />{" "}

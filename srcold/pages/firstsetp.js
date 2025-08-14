@@ -28,10 +28,10 @@ export default function Index() {
         </div>
 
         <div className="row">
-          <div className="col-12 col-md-8 mx-auto">
+          <div className="col-5 mx-auto">
             <div>
               <h2 className="h5-heading">
-                Hi, Welcome! {" "}
+                Hi, Welcome!{" "}
                 <img
                   className="img-fluid"
                   src="/assets/img/image 296.png"
@@ -40,7 +40,7 @@ export default function Index() {
               </h2>
             </div>
 
-            <div className="d-flex justify-content-center align-items-center gap-4 flex-column mt-4">
+            <div className="d-flex justify-content-center align-items-center gap-4 flex-column mt-5">
               <button
                 className="btn existing-customer"
                 onClick={() => handleStart("existing")}
