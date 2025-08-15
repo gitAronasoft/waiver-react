@@ -550,26 +550,26 @@ const generatePDF = async () => {
     <table cellPadding="8" cellSpacing="0" className="w-100">
       <tbody>
         <tr>
-          <td><strong>Participant First Name:</strong><br />{customerData.first_name}</td>
-          <td><strong>Participant Last Name:</strong><br />{customerData.last_name}</td>
-          <td><strong>Middle Initial:</strong><br />{customerData.middle_initial || 'None'}</td>
-          <td><strong>Date of Birth:</strong><br />{customerData.dob?.split("T")[0]}</td>
-          <td><strong>Age:</strong><br />{customerData.age || '--'}</td>
+          <td><strong>Participant First Name:</strong><br /> <span> {customerData.first_name} </span> </td>
+          <td><strong>Participant Last Name:</strong><br /> <span> {customerData.last_name } </span></td>
+          <td><strong>Middle Initial:</strong><br /> <span>{customerData.middle_initial || 'None'} </span> </td>
+          <td><strong>Date of Birth:</strong><br /> <span>{customerData.dob?.split("T")[0]} </span> </td>
+          <td><strong>Age:</strong><br /> <span> {customerData.age || '--'} </span></td>
         </tr>
         <tr>
-          <td colSpan="2"><strong>Address:</strong><br />{customerData.address}</td>
-          <td><strong>City:</strong><br />{customerData.city}</td>
-          <td><strong>Province:</strong><br />{customerData.province}</td>
-          <td><strong>Postal Code:</strong><br />{customerData.postal_code}</td>
+          <td colSpan="2"><strong>Address:</strong><br /> <span> {customerData.address} </span></td>
+          <td><strong>City:</strong><br /> <span> {customerData.city} </span></td>
+          <td><strong>Province:</strong><br /> <span>{customerData.province} </span></td>
+          <td><strong>Postal Code:</strong><br /> <span>{customerData.postal_code} </span></td>
         </tr>
         <tr>
-          <td><strong>Home Phone:</strong><br />{customerData.home_phone}</td>
-          <td><strong>Cell Phone:</strong><br />{customerData.cell_phone}</td>
-          <td><strong>Work Phone:</strong><br />{customerData.work_phone}</td>
-          <td><strong>Email:</strong><br />{customerData.email || '--'}</td>
+          <td><strong>Home Phone:</strong><br /> <span> {customerData.home_phone} </span></td>
+          <td><strong>Cell Phone:</strong><br /> <span> {customerData.cell_phone} </span></td>
+          <td><strong>Work Phone:</strong><br /> <span> {customerData.work_phone} </span></td>
+          <td><strong>Email:</strong><br /> <span> {customerData.email || '--'} </span></td>
           <td>
-            <strong>Can we email?</strong><br />
-            {customerData.can_email ? 'Yes' : 'No'}
+            <strong>Can we email?</strong><br /> <span>
+            {customerData.can_email ? 'Yes' : 'No'}  </span>
           </td>
         </tr>
       </tbody>

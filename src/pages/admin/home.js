@@ -52,19 +52,21 @@ function HomePage() {
       <Header />
       <div className="container">
         <div className="row my-4">
-          <div className="col-md-4 mx-auto text-center">
-            <h5 className="h5-heading">{filteredCustomers.length} Waiver{filteredCustomers.length !== 1 ? 's' : ''} Completed</h5>
+          <div className="col-10 col-md-6 col-xl-4 mx-auto text-center">
+            <h5 className="h5-heading my-3">{filteredCustomers.length} Waiver{filteredCustomers.length !== 1 ? 's' : ''} Completed</h5>
+            <div className='search-waiver'> 
             <input
               className="form-control"
               placeholder="Search Name or Phone Number"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
+            </div>
           </div>
         </div>
 
         <div className="row">
-          <div className="col-md-12">
+          <div className="col-md-12 col-xl-12">
             <div className="card-grid mb-5">
               {filteredCustomers.map((c) => (
                 <PersonCard

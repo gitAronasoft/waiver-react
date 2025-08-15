@@ -444,7 +444,7 @@ AND ADMINISTRATORS MAY HAVE AGAINST SKATE & PLAY INC. </span> </p>
 
       <div className="container">
         <div className="row">
-          <div className="col-12 col-xl-7 col-md-10 mx-auto my-5">
+          <div className="col-12 col-md-12 col-xl-7  mx-auto my-5">
             <div className="client-profile">
               <div>
                 <h5 className="h5-heading">Account Details</h5>
@@ -485,7 +485,7 @@ AND ADMINISTRATORS MAY HAVE AGAINST SKATE & PLAY INC. </span> </p>
               </div>
 
               {showHistory && (
-                <div className="w-75">
+                <div className="w-100 w-md-75">
                   {waiverHistory.map((entry, index) => (
                     <div key={index} className={`my-4 ${index !== waiverHistory.length - 1 ? "border-bottom pb-3" : "pb-3"}`}>
                       <div className="d-flex justify-content-between gap-4 align-items-center">

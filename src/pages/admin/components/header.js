@@ -33,6 +33,9 @@ function Header() {
   return (
     <div className="container-fluid container-header ">
      <div className="container">
+
+
+
   <header className="header">
     <nav className="navbar navbar-expand-lg py-2">
       <div className="container-fluid">
@@ -59,6 +62,76 @@ function Header() {
         >
           <span><i className="fa-solid fa-bars"></i></span>
         </button>
+
+
+        <div className="d-flex d-lg-none align-items-center flex-wrap flex-lg-nowrap header-mobile-view ">
+            
+            {/* Notification Bell */}
+            {/* <img
+              src="/assets/img/bell-icon.png"
+              alt="bell"
+              className="me-3"
+              style={{ width: "18px", height: "18px", cursor: "pointer" }}
+            /> */}
+
+            {/* Profile Dropdown */}
+            <div className="dropdown" ref={dropdownRef}>
+              <img
+                src={
+                  staff?.profile_image
+                    ? `${BACKEND_URL}/api/${staff.profile_image}`
+                    : "/assets/img/Vector.png"
+                }
+                alt="profile"
+                className="dropdown-toggle"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+                style={{
+                  width: "40px",
+                  height: "40px",
+                  borderRadius: "50%",
+                  border: "2px solid #fff",
+                  objectFit: "cover",
+                  cursor: "pointer"
+                }}
+              />
+
+              <ul className="dropdown-menu dropdown-menu-end">
+                <li className="text-center px-3">
+                  {/* <img
+                    src={
+                      staff?.profile_image
+                        ? `${BACKEND_URL}/api/${staff.profile_image}`
+                        : "/assets/img/Vector.png"
+                    } */}
+
+                    <img
+                      src={
+                        staff?.profile_image?.startsWith("http")
+                          ? staff.profile_image
+                          : `${BACKEND_URL}/api/${staff.profile_image}`
+                      }
+                     
+                    
+                    alt="profile"
+                    style={{
+                      width: "50px",
+                      height: "50px",
+                      borderRadius: "50%",
+                      marginBottom: "8px",
+                      objectFit: "cover",
+                    }}
+                  />
+                  <h6>{staff?.name || "Admin User"}</h6>
+                </li>
+                <li><Link className="dropdown-item" to="/admin/change-password">Change Password</Link></li>
+                <li><Link className="dropdown-item" to="/admin/update-profile">Update Profile</Link></li>
+                <li><span className="dropdown-item" style={{ cursor: "pointer" }} onClick={handleLogout}>Sign Out</span></li>
+              </ul>
+            </div>
+          </div>
+
+
 
         {/* Nav Items */}
         <div className="collapse navbar-collapse" id="navbarNavDropdown">
@@ -89,15 +162,17 @@ function Header() {
             />
           </ul>
 
-          {/* Right Side Icons */}
-          <div className="d-flex align-items-center flex-wrap flex-lg-nowrap">
+          {/* Right Side Icons */} 
+          {/* <div className="d-flex align-items-center flex-wrap flex-lg-nowrap"> */}
+            <div className="d-none d-lg-flex align-items-center flex-wrap flex-lg-nowrap">
+            
             {/* Notification Bell */}
-            <img
+            {/* <img
               src="/assets/img/bell-icon.png"
               alt="bell"
               className="me-3"
               style={{ width: "24px", height: "24px", cursor: "pointer" }}
-            />
+            /> */}
 
             {/* Profile Dropdown */}
             <div className="dropdown" ref={dropdownRef}>

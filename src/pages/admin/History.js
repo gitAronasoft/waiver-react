@@ -6,6 +6,7 @@ import 'react-loading-skeleton/dist/skeleton.css';
 import { toast } from "react-toastify";
 import Header from './components/header';
 import Switch from "react-switch";
+import DataTable from 'react-data-table-component';
 
 function HistoryPage() {
   const [waivers, setWaivers] = useState([]);
@@ -14,12 +15,21 @@ function HistoryPage() {
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
-  const [modalType, setModalType] = useState(""); // 'delete' or 'status'
+  const [modalType, setModalType] = useState("");
   const [selectedEntry, setSelectedEntry] = useState(null);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
   const navigate = useNavigate();
   const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
+  // Detect mobile resize
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // Fetch waivers
   useEffect(() => {
     setLoading(true);
     axios.get(`${BACKEND_URL}/api/waivers/getallwaivers`)
@@ -34,10 +44,12 @@ function HistoryPage() {
       .finally(() => setLoading(false));
   }, [BACKEND_URL]);
 
+  // Filter & search
   useEffect(() => {
-    let data = waivers;
+    let data = [...waivers];
+
     if (filter !== 'All') {
-      data = waivers.filter(w => {
+      data = data.filter(w => {
         if (filter === 'Confirmed') return w.status === 1;
         if (filter === 'Unconfirmed') return w.status === 0;
         if (filter === 'Inaccurate') return w.status === 2;
@@ -46,13 +58,11 @@ function HistoryPage() {
     }
 
     if (search.trim() !== "") {
-      data = data.filter((w) => {
+      const lowerSearch = search.toLowerCase();
+      data = data.filter(w => {
         const fullName = `${w.first_name} ${w.last_name}`.toLowerCase();
         const minorNames = (w.minors || []).map(m => `${m.first_name} ${m.last_name}`.toLowerCase());
-        return (
-          fullName.includes(search.toLowerCase()) ||
-          minorNames.some(name => name.includes(search.toLowerCase()))
-        );
+        return fullName.includes(lowerSearch) || minorNames.some(name => name.includes(lowerSearch));
       });
     }
 
@@ -73,7 +83,6 @@ function HistoryPage() {
 
   const handleConfirmModalAction = async () => {
     if (!selectedEntry) return;
-
     try {
       if (modalType === "delete") {
         await axios.delete(`${BACKEND_URL}/api/waivers/${selectedEntry.waiver_id}`);
@@ -95,127 +104,163 @@ function HistoryPage() {
     }
   };
 
+  // Desktop columns
+  const desktopColumns = [
+    { name: "#", cell: (row, index) => index + 1, width: "60px", sortable: true },
+    { name: "Name", selector: row => `${row.first_name} ${row.last_name}`, sortable: true },
+    { name: "Signed Date & Time", selector: row => row.signed_at, sortable: true },
+    { 
+      name: "Status", 
+      cell: row => (
+        <span className={`status-badge ${row.status === 1 ? 'confirmed' : row.status === 0 ? 'unconfirmed' : 'inaccurate'}`}>
+          {row.status === 1 ? 'Confirmed' : row.status === 0 ? 'Unconfirmed' : 'Inaccurate'}
+        </span>
+      ),
+      sortable: true
+    },
+    { 
+      name: "Verified", 
+      cell: row => (
+        <Switch
+          onChange={() => {
+            if (row.status === 2) {
+              toast.info("Inaccurate waivers cannot be updated.");
+              return;
+            }
+            openModal(row, "status");
+          }}
+          checked={row.status === 1}
+          onColor="#4CAF50"
+          offColor="#ccc"
+          handleDiameter={20}
+          uncheckedIcon={false}
+          checkedIcon={false}
+          height={20}
+          width={40}
+          disabled={row.status === 2}
+        />
+      )
+    },
+    { 
+      name: "Action", 
+      cell: row => (
+        <div className="d-flex gap-3 ">
+          <i className="fas fa-eye" style={{ cursor: 'pointer' }} onClick={() => navigate(`/admin/client-profile/${row.id}`)} />
+          <i className="fas fa-trash" style={{ cursor: 'pointer', color: 'red' }} onClick={() => openModal(row, "delete")} />
+        </div>
+      )
+    }
+  ];
+
+  // Mobile columns
+  const mobileColumns = [
+    { name: "Name", selector: row => `${row.first_name} ${row.last_name}`, sortable: true },
+    { name: "Signed Date", selector: row => row.signed_at, sortable: true }
+  ];
+
+  // Expandable component for mobile
+  const ExpandedComponent = ({ data }) => (
+    <div style={{ padding: "10px 20px" }}>
+      <div>
+        <strong>Minors:</strong>
+        {data.minors?.length > 0
+          ? data.minors.map((m, i) => (
+              <div key={`${data.waiver_id}-minor-${i}`}>{m.first_name} {m.last_name}</div>
+            ))
+          : <div>No minors</div>}
+      </div>
+
+      <div style={{ marginTop: "10px" }}>
+        <strong>Status:</strong>{" "}
+        <span className={`status-badge ${data.status === 1 ? 'confirmed' : data.status === 0 ? 'unconfirmed' : 'inaccurate'}`}>
+          {data.status === 1 ? 'Confirmed' : data.status === 0 ? 'Unconfirmed' : 'Inaccurate'}
+        </span>
+      </div>
+
+      <div style={{ marginTop: "10px" }}>
+        <strong>Verified:</strong>{" "}
+        <Switch
+          onChange={() => {
+            if (data.status === 2) {
+              toast.info("Inaccurate waivers cannot be updated.");
+              return;
+            }
+            openModal(data, "status");
+          }}
+          checked={data.status === 1}
+          onColor="#4CAF50"
+          offColor="#ccc"
+          handleDiameter={20}
+          uncheckedIcon={false}
+          checkedIcon={false}
+          height={20}
+          width={40}
+          disabled={data.status === 2}
+        />
+      </div>
+
+      <div style={{ marginTop: "10px" }}>
+        <strong>Action:</strong>{" "}
+        <div className="d-flex gap-3">
+          <i className="fas fa-eye" style={{ cursor: 'pointer' }} onClick={() => navigate(`/admin/client-profile/${data.id}`)} />
+          <i className="fas fa-trash" style={{ cursor: 'pointer', color: 'red' }} onClick={() => openModal(data, "delete")} />
+        </div>
+      </div>
+    </div>
+  );
+
   return (
     <>
       <Header />
       <div className="container mt-5">
         <div className="row">
-          <div className="col-md-10 mx-auto">
+          <div className="col-md-12">
 
-            {/* Search */}
-            <div className="custom-search-box mb-4">
-              <span className="search-icon">
-                <img src="/assets/img/solar_magnifer-outline.png" alt="Search" />
-              </span>
-              <input
-                type="text"
-                className="form-control"
-                placeholder="Search by name or minors"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
+            {/* Search & filter */}
+            <div className="d-flex flex-wrap justify-content-between mb-4">
+              <div className="custom-search-box mb-2 custom-search-mobile-view">
+                <span className="search-icon">
+                  <img src="/assets/img/solar_magnifer-outline.png" alt="Search" />
+                </span>
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder="Search by name or minors"
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                />
+              </div>
+
+              <div className="d-flex gap-2  gap-md-2 align-items-center mb-2">
+                {['All', 'Confirmed', 'Unconfirmed', 'Inaccurate'].map(type => (
+                  <div
+                    key={type}
+                    className={`all-waiver ${filter === type ? 'active-tab' : ''}`}
+                    onClick={() => setFilter(type)}
+                    style={{ cursor: "pointer" }}
+                  >
+                    {type}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {loading ? (
+              <Skeleton height={50} count={5} />
+            ) : (
+              <DataTable
+                columns={isMobile ? mobileColumns : desktopColumns}
+                data={filtered}
+                pagination
+                responsive
+                highlightOnHover
+                noHeader
+                keyField="waiver_id"
+                expandableRows={isMobile}
+                expandableRowsComponent={ExpandedComponent}
               />
-            </div>
+            )}
 
-            {/* Filter Tabs */}
-            <div className="d-flex gap-5 align-items-center my-4">
-              {['All', 'Confirmed', 'Unconfirmed', 'Inaccurate'].map((type) => (
-                <div
-                  key={type}
-                  className={`all-waiver ${filter === type ? 'active-tab' : ''}`}
-                  onClick={() => setFilter(type)}
-                >
-                  {type}
-                </div>
-              ))}
-            </div>
-
-            {/* Table */}
-            <div className="history-table">
-              <table className="table">
-                <thead>
-                  <tr>
-                    <th>#</th>
-                    <th>Name</th>
-                    <th>Minors</th>
-                    <th>Signed Date & Time</th>
-                    <th>Status</th>
-                    <th>Verified</th>
-                    <th>Action</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {loading ? (
-                    Array.from({ length: 5 }).map((_, i) => (
-                      <tr key={i}>
-                        <td><Skeleton width={50} /></td>
-                        <td><Skeleton width={120} /></td>
-                        <td><Skeleton width={100} /></td>
-                        <td><Skeleton width={140} /></td>
-                        <td><Skeleton width={100} /></td>
-                        <td><Skeleton width={100} /></td>
-                        <td><Skeleton width={100} /></td>
-                      </tr>
-                    ))
-                  ) : filtered.length === 0 ? (
-                    <tr>
-                      <td colSpan="7" className="text-center">No records found</td>
-                    </tr>
-                  ) : (
-                    filtered.map((entry, index) => (
-                      <tr key={index}>
-                        <td>{index + 1}</td>
-                        <td>{entry.first_name} {entry.last_name}</td>
-                        <td>
-                          {entry.minors?.map((minor, i) => (
-                            <div key={i}>{minor.first_name} {minor.last_name}</div>
-                          ))}
-                        </td>
-                        <td>{entry.signed_at}</td>
-                        <td>
-                          <span
-                            className={`status-badge ${entry.status === 1 ? 'confirmed' : entry.status === 0 ? 'unconfirmed' : 'inaccurate'}`}
-                          >
-                            {entry.status === 1 ? 'Confirmed' : entry.status === 0 ? 'Unconfirmed' : 'Inaccurate'}
-                          </span>
-                        </td>
-                        <td>
-                          <Switch
-                            onChange={() => {
-                              if (entry.status === 2) {
-                                toast.info("Inaccurate waivers cannot be updated.");
-                                return;
-                              }
-                              openModal(entry, "status");
-                            }}
-                            checked={entry.status === 1}
-                            onColor="#4CAF50"
-                            offColor="#ccc"
-                            handleDiameter={20}
-                            uncheckedIcon={false}
-                            checkedIcon={false}
-                            height={20}
-                            width={40}
-                            disabled={entry.status === 2}
-                          />
-                        </td>
-                        <td className="text-center d-flex gap-3 align-items-center">
-                          <i
-                            className="fas fa-eye me-2"
-                            style={{ cursor: 'pointer' }}
-                            onClick={() => navigate(`/admin/client-profile/${entry.id}`)}
-                          />
-                          <i
-                            className="fas fa-trash"
-                            style={{ cursor: 'pointer', color: 'red' }}
-                            onClick={() => openModal(entry, "delete")}
-                          />
-                        </td>
-                      </tr>
-                    ))
-                  )}
-                </tbody>
-              </table>
-            </div>
           </div>
         </div>
       </div>
@@ -236,13 +281,11 @@ function HistoryPage() {
                   <p>Are you sure you want to delete this waiver for <strong>{selectedEntry.first_name} {selectedEntry.last_name}</strong>?</p>
                 ) : (
                   <p>
-                    Are you sure you want to{" "}
-                    <strong>{selectedEntry.status === 1 ? "Unconfirm" : "Confirm"}</strong> this waiver for{" "}
-                    <strong>{selectedEntry.first_name} {selectedEntry.last_name}</strong>?
+                    Are you sure you want to <strong>{selectedEntry.status === 1 ? "Unconfirm" : "Confirm"}</strong> this waiver for <strong>{selectedEntry.first_name} {selectedEntry.last_name}</strong>?
                   </p>
                 )}
               </div>
-              <div className="modal-footer">
+               <div className="modal-footer">
                 <button className="btn btn-secondary" onClick={closeModal}>Cancel</button>
                 <button className="btn btn-danger" onClick={handleConfirmModalAction}>
                   Yes, {modalType === "delete" ? "Delete" : selectedEntry.status === 1 ? "Unconfirm" : "Confirm"}

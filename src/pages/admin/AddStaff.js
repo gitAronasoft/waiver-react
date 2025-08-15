@@ -52,7 +52,7 @@ function AddStaff() {
                 </div>
               </div>
 
-              <form onSubmit={handleSubmit}>
+              <form onSubmit={handleSubmit} className="add-staff-input">
                 {/* Name Field */}
                 <div className="mb-3">
                   <label className="form-label">Name</label>

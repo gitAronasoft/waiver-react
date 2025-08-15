@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Confetti from "react-confetti"; // Install: npm install react-confetti
 
+
 function AllDone() {
   const navigate = useNavigate();
   const [countdown, setCountdown] = useState(5); // 5-second countdown
@@ -25,6 +26,7 @@ function AllDone() {
     return () => clearInterval(interval);
   }, [navigate]);
 
+
   return (
     <div className="container-fluid text-center" style={{ position: "relative" }}>
       {/* 🎉 Confetti Animation */}
@@ -37,7 +39,7 @@ function AllDone() {
 
       <div className="container">
         <div className="row">
-          <div className="col-md-8 mx-auto">
+          <div className="col-12 col-md-12 col-xl-8 mx-auto">
             <div className="logo-img my-4">
               <img
                 className="img-fluid"
@@ -46,7 +48,7 @@ function AllDone() {
               />
             </div>
 
-            <h3 className="my-4 h5-heading" style={{ fontSize: "2rem", fontWeight: "bold" }}>
+            <h3 className="my-4 h5-heading h3-heading" style={{ fontSize: "2rem", fontWeight: "bold" }}>
               🎉 YAY!!! ALL DONE 🎉 <br />
               ENJOY YOUR TIME!!!
             </h3>
@@ -55,9 +57,9 @@ function AllDone() {
               Redirecting to the main screen in <strong>{countdown}</strong> seconds...
             </p>
 
-            <div>
+            <div className="mx-auto text-center">
               <button
-                className="return-btn btn btn-primary mt-3"
+                className="return-btn btn btn-primary mt-3 text-center"
                 onClick={handleReturn}
               >
                 Return to the MAIN screen now
