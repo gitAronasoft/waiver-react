@@ -64,9 +64,9 @@ function NewCustomerForm() {
 
     try {
       const response = await axios.post(`${BACKEND_URL}/api/waivers`, fullData);
-      const otp = response.data.otp;
+      // const otp = response.data.otp;
 
-      toast.success(`Customer created and OTP sent successfully. OTP: ${otp}`);
+      toast.success(`Customer created and OTP sent successfully.`);
       navigate("/opt-verified", {
         state: { phone: formData.cell_phone, customerType: "new" },
       });
