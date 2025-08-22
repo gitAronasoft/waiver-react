@@ -2,7 +2,10 @@ import React, { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import SignaturePad from "react-signature-canvas";
 import axios from "axios";
+import jsPDF from "jspdf";
+import html2canvas from "html2canvas";
 import { toast } from 'react-toastify';
+import html2pdf from "html2pdf.js";
 import { getCurrentESTTime } from "../utils/time";
 
 
@@ -11,7 +14,7 @@ function Signature() {
   const location = useLocation();
   const navigate = useNavigate();
   const sigPadRef = useRef();
-
+  const pdfRef = useRef();
   const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
   const [signatureImage, setSignatureImage] = useState(null);
@@ -193,8 +196,8 @@ function Signature() {
 
     try {
       await axios.post(`${BACKEND_URL}/api/waivers/save-signature`, payload);
- 
-      toast.success("Signature submitted sucessfully.");
+      await generatePDF();
+      toast.success("Signature submitted and PDF downloaded.");
       navigate("/rules", {
         state: { userId: customerData?.id, phone, customerType },
       });
@@ -205,12 +208,296 @@ function Signature() {
   };
 
 
+  //generatePDF with html 
+  // const generatePDF = () => {
+  //   const element = pdfRef.current;
+  //    const signedDate = getCurrentESTTime("YYYY-MM-DD hh:mm A");      // ✅ EST Time
+  // const generatedDate = getCurrentESTTime("YYYY-MM-DD hh:mm A");   // ✅ EST Time
+
+  //   const footerDiv = document.createElement("div");
+  //   footerDiv.style.textAlign = "center";
+  //   footerDiv.style.fontSize = "12px";
+  //   footerDiv.style.marginTop = "20px";
+  //   footerDiv.innerHTML = `
+  //     <p><strong>Signed on:</strong> ${signedDate}</p>
+  //     <p><strong>PDF Generated on:</strong> ${generatedDate}</p>
+  //   `;
+  //   element.appendChild(footerDiv);
+
+  //   const elementsToHide = element.querySelectorAll(".no-print");
+  //   elementsToHide.forEach((el) => (el.style.display = "none"));
+
+  //   const opt = {
+  //     margin: [10, 10],
+  //     filename: "waiver-form.pdf",
+  //     image: { type: "jpeg", quality: 1.0 },
+  //     html2canvas: { scale: 2, useCORS: true, scrollY: 0 },
+  //     jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
+  //     pagebreak: { mode: ["avoid-all", "css", "legacy"] },
+  //   };
+
+  //   html2pdf()
+  //     .set(opt)
+  //     .from(element)
+  //     .save()
+  //     .then(() => {
+  //       footerDiv.remove();
+  //       elementsToHide.forEach((el) => (el.style.display = ""));
+  //     });
+  // };
+
+// const generatePDF = async () => {
+//   const input = pdfRef.current;
+
+//   // Get EST time for footer
+// //   const signedDate = getCurrentESTTime("YYYY-MM-DD hh:mm A");
+// //   const generatedDate = getCurrentESTTime("YYYY-MM-DD hh:mm A");
+
+// //   // Footer
+// //   const footerDiv = document.createElement("div");
+// //   footerDiv.style.textAlign = "center";
+// //   footerDiv.style.fontSize = "12px";
+// //   footerDiv.style.marginTop = "20px";
+// //   footerDiv.innerHTML = `
+// //     <p><strong>Signed on:</strong> ${signedDate}</p>
+// //     <p><strong>PDF Generated on:</strong> ${generatedDate}</p>
+// //   `;
+// //   input.appendChild(footerDiv);
+
+// const signedDate = getCurrentESTTime("YYYY-MM-DD hh:mm A");
+// const generatedDate = getCurrentESTTime("YYYY-MM-DD hh:mm A");
+
+// // Example dynamic values — replace with actual form values
+// const printedName = form.fullName || "_____________________";
+// const dob = customerData?.dob?.split("T")[0] || "_____________________";
+
+// const footerDiv = document.createElement("div");
+// footerDiv.style.fontSize = "12px";
+// footerDiv.style.marginTop = "40px";
+// footerDiv.style.borderTop = "1px solid #000";
+// footerDiv.style.paddingTop = "10px";
+// footerDiv.style.lineHeight = "1.6";
+// footerDiv.innerHTML = `
+//   <div style="text-align: center;">
+//     <p><strong>Signed on:</strong> ${signedDate}</p>
+//     <p><strong>PDF Generated on:</strong> ${generatedDate}</p>
+//   </div>
+
+//   <div style="font-family: Arial, sans-serif; font-size: 14px; max-width: 800px; margin: 20px auto;">
+
+//   <div style="display: flex; justify-content: space-between; margin-bottom: 40px;">
+//     <div style="width: 48%;">
+//       <label>DATE__________________________________</label>
+//       <div style="margin-top: 30px;">__________________________________<br><small>Signature</small></div>
+//       <div style="margin-top: 30px;">__________________________________<br><small>Printed Name</small></div>
+//     </div>
+//     <div style="width: 48%;">
+//       <br>
+//       <div>__________________________________<br><small>Signature or Witness</small></div>
+//       <div style="margin-top: 30px;">__________________________________<br><small>Printed Name or Witness</small></div>
+//     </div>
+//   </div>
+
+//   <div style="border: 1px solid black; padding: 10px;">
+//     <p style="font-weight: bold; text-align: center;">PLEASE COMPLETE IF THE PARTICIPANT IS UNDER THE AGE OF 18</p>
+//     <p>DATE OF BIRTH: __________________________________</p>
+//     <p>PARENT/GUARDIAN'S NAME: ____________________________</p>
+//     <p>PARENT/GUARDIAN SIGNATURE: ____________________________</p>
+//   </div>
+
+// </div>
+
+// `;
+
+// input.appendChild(footerDiv);
+
+
+//   // Hide non-printable elements
+//   const elementsToHide = input.querySelectorAll(".no-print");
+//   elementsToHide.forEach(el => el.style.display = "none");
+
+// // Wait a short tick to allow re-render
+// await new Promise((resolve) => setTimeout(resolve, 200));
+
+//   try {
+//     const canvas = await html2canvas(input, {
+//       scale: 2,
+//       useCORS: true,
+//       scrollY: -window.scrollY,
+//     });
+
+//     const pdf = new jsPDF("p", "mm", "a4");
+
+//     const margin = 10;
+//     const pageWidth = pdf.internal.pageSize.getWidth();   // 210mm
+//     const pageHeight = pdf.internal.pageSize.getHeight(); // 297mm
+//     const usableWidth = pageWidth - margin * 2;
+//     const usableHeight = pageHeight - margin * 2;
+
+//     const imgWidth = usableWidth;
+//     const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+//     const pageCanvasHeight = (usableHeight * canvas.width) / imgWidth; // slice height in px
+
+//     let renderedHeight = 0;
+//     let pageIndex = 0;
+
+//     while (renderedHeight < canvas.height) {
+//       const pageCanvas = document.createElement("canvas");
+//       pageCanvas.width = canvas.width;
+//       pageCanvas.height = Math.min(pageCanvasHeight, canvas.height - renderedHeight);
+
+//       const context = pageCanvas.getContext("2d");
+//       context.drawImage(
+//         canvas,
+//         0,
+//         renderedHeight,
+//         canvas.width,
+//         pageCanvas.height,
+//         0,
+//         0,
+//         canvas.width,
+//         pageCanvas.height
+//       );
+
+//       const pageData = pageCanvas.toDataURL("image/png");
+//       if (pageIndex > 0) pdf.addPage();
+//       pdf.addImage(pageData, "PNG", margin, margin, imgWidth, (pageCanvas.height * imgWidth) / canvas.width);
+
+//       renderedHeight += pageCanvasHeight;
+//       pageIndex++;
+//     }
+
+//     pdf.save("SKAT&PLAY.pdf");
+//   } catch (err) {
+//     console.error("PDF generation failed", err);
+//     toast.error("Failed to generate PDF.");
+//   } finally {
+//     // Restore UI
+//     footerDiv.remove();
+//     elementsToHide.forEach(el => el.style.display = "");
+//   }
+// };
+
+
+const generatePDF = async () => {
+  const input = pdfRef.current;
+
+  // Prepare timestamp values (in EST)
+  const signedDate = getCurrentESTTime("YYYY-MM-DD hh:mm A");
+  const generatedDate = getCurrentESTTime("YYYY-MM-DD hh:mm A");
+
+  // Add a footer for signature and metadata
+  const footerDiv = document.createElement("div");
+  footerDiv.style.fontSize = "12px";
+  footerDiv.style.marginTop = "40px";
+  footerDiv.style.borderTop = "1px solid #000";
+  footerDiv.style.paddingTop = "10px";
+  footerDiv.style.lineHeight = "1.6";
+  footerDiv.innerHTML = `
+    <div style="text-align: center;">
+      <p><strong>Signed on:</strong> ${signedDate}</p>
+      <p><strong>PDF Generated on:</strong> ${generatedDate}</p>
+    </div>
+
+    <div style="font-family: Arial, sans-serif; font-size: 14px; max-width: 800px; margin: 20px auto;">
+      <div style="display: flex; justify-content: space-between; margin-bottom: 40px;">
+        <div style="width: 48%;">
+          <label>DATE__________________________________</label>
+          <div style="margin-top: 30px;">__________________________________<br><small>Signature</small></div>
+          <div style="margin-top: 30px;">${form.fullName || "_____________________"}<br><small>Printed Name</small></div>
+        </div>
+        <div style="width: 48%;">
+          <br>
+          <div>__________________________________<br><small>Signature or Witness</small></div>
+          <div style="margin-top: 30px;">__________________________________<br><small>Printed Name or Witness</small></div>
+        </div>
+      </div>
+
+      <div style="border: 1px solid black; padding: 10px;">
+        <p style="font-weight: bold; text-align: center;">PLEASE COMPLETE IF THE PARTICIPANT IS UNDER THE AGE OF 18</p>
+        <p>DATE OF BIRTH: ${customerData?.dob?.split("T")[0] || "_____________________"}</p>
+        <p>PARENT/GUARDIAN'S NAME: ____________________________</p>
+        <p>PARENT/GUARDIAN SIGNATURE: ____________________________</p>
+      </div>
+    </div>
+  `;
+
+  input.appendChild(footerDiv);
+
+  // Hide elements not for print
+  const elementsToHide = input.querySelectorAll(".no-print");
+  elementsToHide.forEach(el => el.style.display = "none");
+
+  // Wait a short tick to allow DOM changes to apply
+  await new Promise(resolve => setTimeout(resolve, 200));
+
+  try {
+    const canvas = await html2canvas(input, {
+      scale: 1, // ✅ reduced from 2
+      useCORS: true,
+      scrollY: -window.scrollY,
+    });
+
+    const pdf = new jsPDF("p", "mm", "a4");
+
+    const margin = 10;
+    const pageWidth = pdf.internal.pageSize.getWidth();   // 210mm
+    const pageHeight = pdf.internal.pageSize.getHeight(); // 297mm
+    const usableWidth = pageWidth - margin * 2;
+    const usableHeight = pageHeight - margin * 2;
+
+    const imgWidth = usableWidth;
+    const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+    const pageCanvasHeight = (usableHeight * canvas.width) / imgWidth; // height in canvas pixels
+
+    let renderedHeight = 0;
+    let pageIndex = 0;
+
+    while (renderedHeight < canvas.height) {
+      const pageCanvas = document.createElement("canvas");
+      pageCanvas.width = canvas.width;
+      pageCanvas.height = Math.min(pageCanvasHeight, canvas.height - renderedHeight);
+
+      const context = pageCanvas.getContext("2d");
+      context.drawImage(
+        canvas,
+        0,
+        renderedHeight,
+        canvas.width,
+        pageCanvas.height,
+        0,
+        0,
+        canvas.width,
+        pageCanvas.height
+      );
+
+      const pageData = pageCanvas.toDataURL("image/jpeg", 0.7); // ✅ use JPEG with 70% quality
+
+      if (pageIndex > 0) pdf.addPage();
+      pdf.addImage(pageData, "JPEG", margin, margin, imgWidth, (pageCanvas.height * imgWidth) / canvas.width, undefined, 'FAST'); // ✅ 'FAST' compression
+
+      renderedHeight += pageCanvasHeight;
+      pageIndex++;
+    }
+
+    pdf.save("SKATE_AND_PLAY_Waiver.pdf");
+  } catch (err) {
+    console.error("PDF generation failed", err);
+    toast.error("Failed to generate PDF.");
+  } finally {
+    // Restore DOM
+    footerDiv.remove();
+    elementsToHide.forEach(el => el.style.display = "");
+  }
+};
 
 
   // if (!customerData) return <div className="text-center mt-5">Loading...</div>;
 
   return (
-    <div className="container-fluid">
+    <div className="container-fluid" ref={pdfRef}>
       <div className="container">
         <div className="row">
           <div className="col-md-2">

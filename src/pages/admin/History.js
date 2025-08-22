@@ -248,6 +248,7 @@ function HistoryPage() {
             {loading ? (
               <Skeleton height={50} count={5} />
             ) : (
+              <div class="history-table">
               <DataTable
                 columns={isMobile ? mobileColumns : desktopColumns}
                 data={filtered}
@@ -259,6 +260,7 @@ function HistoryPage() {
                 expandableRows={isMobile}
                 expandableRowsComponent={ExpandedComponent}
               />
+              </div>
             )}
 
           </div>

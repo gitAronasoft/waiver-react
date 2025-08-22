@@ -47,7 +47,8 @@ useEffect(() => {
 
   setTimeout(() => {
     if (rate === 5) {
-      window.location.href = 'https://g.page/YOUR_GOOGLE_REVIEW_LINK';
+      // window.location.href = 'https://g.page/YOUR_GOOGLE_REVIEW_LINK';
+      window.location.href = process.env.GOOGLE_REVIEW_LINK;
     } else {
       // Navigate with user id and feedback id
       navigate(`/feedback?userId=${id}&feedbackId=${feedbackId}`);
