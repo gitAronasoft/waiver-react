@@ -10,6 +10,7 @@ function StarRatingPage() {
   const [customerName, setCustomerName] = useState('');
   const [submitted, setSubmitted] = useState(false);
   const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+  const GOOGLE_REVIEW_LINK = process.env.REACT_APP_GOOGLE_REVIEW_LINK;
 
 
 useEffect(() => {
@@ -47,8 +48,7 @@ useEffect(() => {
 
   setTimeout(() => {
     if (rate === 5) {
-      // window.location.href = 'https://g.page/YOUR_GOOGLE_REVIEW_LINK';
-      window.location.href = process.env.GOOGLE_REVIEW_LINK;
+         window.location.href = GOOGLE_REVIEW_LINK; 
     } else {
       // Navigate with user id and feedback id
       navigate(`/feedback?userId=${id}&feedbackId=${feedbackId}`);
