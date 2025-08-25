@@ -107,8 +107,18 @@ function HistoryPage() {
   // Desktop columns
   const desktopColumns = [
     { name: "#", cell: (row, index) => index + 1, width: "60px", sortable: true },
-    { name: "Name", selector: row => `${row.first_name} ${row.last_name}`, sortable: true },
-    { name: "Signed Date & Time", selector: row => row.signed_at, sortable: true },
+    // { name: "Name", selector: row => `${row.first_name} ${row.last_name}`, sortable: true },
+      {
+        name: "Name",
+        selector: row => `${row.first_name} ${row.last_name}`,
+        sortable: true,
+        cell: row => (
+          <span title={`${row.first_name} ${row.last_name}`}>
+            {row.first_name} {row.last_name}
+          </span>
+        )
+      },
+    { name: "Signed Date & Time", selector: row => row.signed_at, sortable: true,  wrap: true,  grow: 2, minWidth: "200px" },
     { 
       name: "Status", 
       cell: row => (
@@ -141,6 +151,30 @@ function HistoryPage() {
         />
       )
     },
+   {
+  name: "Review Mail",
+  cell: row => (
+    <span
+      className={`status-badge ${row.rating_email_sent === 1 ? 'confirmed' : 'unconfirmed'}`}
+    >
+      {row.rating_email_sent == 1 ? "Mail Sent" : "Not Sent"}
+    </span>
+  ),
+  sortable: true
+},
+
+{
+  name: "Review SMS",
+  cell: row => (
+    <span
+      className={`status-badge ${row.rating_sms_sent === 1 ? 'confirmed' : 'unconfirmed'}`}
+    >
+      {row.rating_sms_sent == 1 ? "Mail SMS" : "Not Sent"}
+    </span>
+  ),
+  sortable: true
+},
+
     { 
       name: "Action", 
       cell: row => (
@@ -159,55 +193,106 @@ function HistoryPage() {
   ];
 
   // Expandable component for mobile
-  const ExpandedComponent = ({ data }) => (
-    <div style={{ padding: "10px 20px" }}>
-      <div>
-        <strong>Minors:</strong>
-        {data.minors?.length > 0
-          ? data.minors.map((m, i) => (
-              <div key={`${data.waiver_id}-minor-${i}`}>{m.first_name} {m.last_name}</div>
-            ))
-          : <div>No minors</div>}
-      </div>
+// Expandable component for mobile
+const ExpandedComponent = ({ data }) => (
+  <div style={{ padding: "10px 20px" }}>
+    {/* Minors */}
+    <div>
+      <strong>Minors:</strong>
+      {data.minors?.length > 0
+        ? data.minors.map((m, i) => (
+            <div key={`${data.waiver_id}-minor-${i}`}>
+              {m.first_name} {m.last_name}
+            </div>
+          ))
+        : <div>No minors</div>}
+    </div>
 
-      <div style={{ marginTop: "10px" }}>
-        <strong>Status:</strong>{" "}
-        <span className={`status-badge ${data.status === 1 ? 'confirmed' : data.status === 0 ? 'unconfirmed' : 'inaccurate'}`}>
-          {data.status === 1 ? 'Confirmed' : data.status === 0 ? 'Unconfirmed' : 'Inaccurate'}
-        </span>
-      </div>
+    {/* Status */}
+    <div style={{ marginTop: "10px" }}>
+      <strong>Status:</strong>{" "}
+      <span
+        className={`status-badge ${
+          data.status === 1
+            ? "confirmed"
+            : data.status === 0
+            ? "unconfirmed"
+            : "inaccurate"
+        }`}
+      >
+        {data.status === 1
+          ? "Confirmed"
+          : data.status === 0
+          ? "Unconfirmed"
+          : "Inaccurate"}
+      </span>
+    </div>
 
-      <div style={{ marginTop: "10px" }}>
-        <strong>Verified:</strong>{" "}
-        <Switch
-          onChange={() => {
-            if (data.status === 2) {
-              toast.info("Inaccurate waivers cannot be updated.");
-              return;
-            }
-            openModal(data, "status");
-          }}
-          checked={data.status === 1}
-          onColor="#4CAF50"
-          offColor="#ccc"
-          handleDiameter={20}
-          uncheckedIcon={false}
-          checkedIcon={false}
-          height={20}
-          width={40}
-          disabled={data.status === 2}
+    {/* Verified Switch */}
+    <div style={{ marginTop: "10px" }}>
+      <strong>Verified:</strong>{" "}
+      <Switch
+        onChange={() => {
+          if (data.status === 2) {
+            toast.info("Inaccurate waivers cannot be updated.");
+            return;
+          }
+          openModal(data, "status");
+        }}
+        checked={data.status === 1}
+        onColor="#4CAF50"
+        offColor="#ccc"
+        handleDiameter={20}
+        uncheckedIcon={false}
+        checkedIcon={false}
+        height={20}
+        width={40}
+        disabled={data.status === 2}
+      />
+    </div>
+
+    {/* Review Mail */}
+    <div style={{ marginTop: "10px" }}>
+      <strong>Review Mail:</strong>{" "}
+      <span
+        className={`status-badge ${
+          data.rating_email_sent === 1 ? "confirmed" : "unconfirmed"
+        }`}
+      >
+        {data.rating_email_sent === 1 ? "Mail Sent" : "Not Sent"}
+      </span>
+    </div>
+
+    {/* Review SMS */}
+    <div style={{ marginTop: "10px" }}>
+      <strong>Review SMS:</strong>{" "}
+      <span
+        className={`status-badge ${
+          data.rating_sms_sent === 1 ? "confirmed" : "unconfirmed"
+        }`}
+      >
+        {data.rating_sms_sent === 1 ? "Mail SMS" : "Not Sent"}
+      </span>
+    </div>
+
+    {/* Action */}
+    <div style={{ marginTop: "10px" }}>
+      <strong>Action:</strong>{" "}
+      <div className="d-flex gap-3">
+        <i
+          className="fas fa-eye"
+          style={{ cursor: "pointer" }}
+          onClick={() => navigate(`/admin/client-profile/${data.id}`)}
+        />
+        <i
+          className="fas fa-trash"
+          style={{ cursor: "pointer", color: "red" }}
+          onClick={() => openModal(data, "delete")}
         />
       </div>
-
-      <div style={{ marginTop: "10px" }}>
-        <strong>Action:</strong>{" "}
-        <div className="d-flex gap-3">
-          <i className="fas fa-eye" style={{ cursor: 'pointer' }} onClick={() => navigate(`/admin/client-profile/${data.id}`)} />
-          <i className="fas fa-trash" style={{ cursor: 'pointer', color: 'red' }} onClick={() => openModal(data, "delete")} />
-        </div>
-      </div>
     </div>
-  );
+  </div>
+);
 
   return (
     <>

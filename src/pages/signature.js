@@ -171,8 +171,17 @@ function Signature() {
       return;
     }
 
-    // const signatureData = sigPadRef.current.getCanvas().toDataURL("image/png");
-    const signatureData = sigPadRef.current.getCanvas().toDataURL("image/jpeg", 0.6); // ✅ Compress signature
+    //const signatureData = sigPadRef.current.getCanvas().toDataURL("image/png");
+    // const signatureData = sigPadRef.current.getCanvas().toDataURL("image/jpeg", 0.6); // ✅ Compress signature
+
+       // ✅ Add white background before exporting
+    const canvas = sigPadRef.current.getCanvas();
+    const ctx = canvas.getContext("2d");
+    ctx.globalCompositeOperation = "destination-over";
+    ctx.fillStyle = "#FFFFFF";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    const signatureData = canvas.toDataURL("image/jpeg", 0.6); // compressed JPEG with white background
 
     setSignatureImage(signatureData);
     localStorage.setItem(
