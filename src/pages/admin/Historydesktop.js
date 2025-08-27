@@ -199,15 +199,21 @@ const desktopColumns = [
     )
   },
 
-{
-      name: "Minors",
-      cell: row =>
-        row.minors?.length > 0
-          ? row.minors.map(m => `${m.first_name} ${m.last_name}`).join(", ")
-          : "-",
-      wrap: true
-    },
-
+ {
+  name: "Minors",
+  cell: row => (
+    <span>
+      
+      {row.minors?.length > 0
+        ? row.minors.map(m => `${m.first_name} ${m.last_name}`).join(", ")
+        : "No minors"}
+    </span>
+  ),
+  grow: 2,
+  wrap: true,
+  minWidth: "200px"
+}
+,
   { name: "Signed Date & Time", selector: row => row.signed_at, sortable: true, wrap: true, grow: 2, minWidth: "200px" },
 
   { 

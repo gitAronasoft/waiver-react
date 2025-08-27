@@ -63,25 +63,13 @@ function NewCustomerForm() {
     const fullData = { ...formData, minors: minorList, send_otp: isChecked };
 
     try {
-    //   const response = await axios.post(`${BACKEND_URL}/api/waivers`, fullData);
-    //   // const otp = response.data.otp;
+      const response = await axios.post(`${BACKEND_URL}/api/waivers`, fullData);
+      // const otp = response.data.otp;
 
-    //   toast.success(`Customer created and OTP sent successfully.`);
-    //   navigate("/opt-verified", {
-    //     state: { phone: formData.cell_phone, customerType: "new" },
-    //   });
-const response = await axios.post(`${BACKEND_URL}/api/waivers`, fullData);
-    if (isChecked) {
-    toast.success(`Customer created and OTP sent successfully.`);
-    navigate("/opt-verified", {
-      state: { phone: formData.cell_phone, customerType: "new" },
-    });
-  } else {
-    toast.success("Customer created successfully. Skipping OTP.");
-    navigate("/signature", {   // <-- go straight to signature
-      state: { phone: formData.cell_phone },
-    });
-  }
+      toast.success(`Customer created and OTP sent successfully.`);
+      navigate("/opt-verified", {
+        state: { phone: formData.cell_phone, customerType: "new" },
+      });
     } catch (err) {
       if (err.response && err.response.status === 409) {
         toast.error("🚫 This phone number already exists. Please use a different number.");
