@@ -12,7 +12,7 @@ function VerifyOtp() {
   const otpVerifiedRef = useRef(false);
     const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
-  console.log("OTP Verified:", customerType);
+  // console.log("OTP Verified:", customerType);
 
   const handleKeypadClick = (value) => {
     if (value === "Clear") {

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
+import { useMask } from "@react-input/mask";
 
 function NewCustomerForm() {
   const navigate = useNavigate();
@@ -11,6 +12,13 @@ function NewCustomerForm() {
   const [isChecked, setIsChecked] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+
+  const homePhoneRef = useMask({ mask: "(___) ___-____", replacement: { _: /\d/ } });
+const cellPhoneRef = useMask({ mask: "(___) ___-____", replacement: { _: /\d/ } });
+const workPhoneRef = useMask({ mask: "(___) ___-____", replacement: { _: /\d/ } });
+
+const stripMask = (val) => (val ? val.replace(/\D/g, "") : ""); // ✅ remove formatting
+
 
   const [formData, setFormData] = useState({
     first_name: "",
@@ -74,12 +82,14 @@ const response = await axios.post(`${BACKEND_URL}/api/waivers`, fullData);
     if (isChecked) {
     toast.success(`Customer created and OTP sent successfully.`);
     navigate("/opt-verified", {
-      state: { phone: formData.cell_phone, customerType: "new" },
+      state: { phone: stripMask(formData.cell_phone), customerType: "new" },
+       
     });
   } else {
     toast.success("Customer created successfully. Skipping OTP.");
+     
     navigate("/signature", {   // <-- go straight to signature
-      state: { phone: formData.cell_phone },
+      state: { phone: stripMask(formData.cell_phone) },
     });
   }
     } catch (err) {
@@ -99,7 +109,7 @@ const response = await axios.post(`${BACKEND_URL}/api/waivers`, fullData);
 
   const handleNextClick = () => {
     navigate("/existing-customer", {
-      state: { phone: formData.cell_phone },
+      state: { phone: stripMask(formData.cell_phone) },
     });
   };
 
@@ -196,7 +206,7 @@ const response = await axios.post(`${BACKEND_URL}/api/waivers`, fullData);
                     </tr>
 
                     <tr>
-                      <td>
+                      {/* <td>
                         Home Phone:<span className="required-star">*</span><br />
                         <input type="tel" name="home_phone" value={formData.home_phone} onChange={handleChange} className="form-control" required />
                       </td>
@@ -207,7 +217,45 @@ const response = await axios.post(`${BACKEND_URL}/api/waivers`, fullData);
                       <td>
                         Work Phone:<br />
                         <input type="tel" name="work_phone" value={formData.work_phone} onChange={handleChange} className="form-control" />
+                      </td> */}
+                      <td>
+                        Home Phone:<span className="required-star">*</span><br />
+                        <input
+                          ref={homePhoneRef}
+                          type="tel"
+                          name="home_phone"
+                          value={formData.home_phone}
+                          onChange={handleChange}
+                          className="form-control"
+                          required
+                        />
                       </td>
+
+                      <td>
+                        Cell Phone:<span className="required-star">*</span><br />
+                        <input
+                          ref={cellPhoneRef}
+                          type="tel"
+                          name="cell_phone"
+                          value={formData.cell_phone}
+                          onChange={handleChange}
+                          className="form-control"
+                          required
+                        />
+                      </td>
+
+                      <td>
+                        Work Phone:<br />
+                        <input
+                          ref={workPhoneRef}
+                          type="tel"
+                          name="work_phone"
+                          value={formData.work_phone}
+                          onChange={handleChange}
+                          className="form-control"
+                        />
+                      </td>
+
                       <td>
                         Email:<span className="required-star">*</span><br />
                         <input type="email" name="email" value={formData.email} onChange={handleChange} className="form-control" />

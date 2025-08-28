@@ -1,35 +1,59 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
-import { toast } from 'react-toastify';
+import { toast } from "react-toastify";
+import { useMask } from "@react-input/mask"; // ✅ Import mask hook
 
 function ExistingCustomerLogin() {
   const [phone, setPhone] = useState("");
   const navigate = useNavigate();
   const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
+  // ✅ Phone mask ref
+  const phoneRef = useMask({
+    mask: "(___) ___-____",
+    replacement: { _: /\d/ },
+  });
+
   const handleKeypadClick = (value) => {
     if (value === "Clear") {
       setPhone("");
-    } else if (value === "." || phone.length >= 10) {
+    } else if (value === "." || phone.replace(/\D/g, "").length >= 10) {
       return;
     } else {
-      setPhone((prev) => prev + value);
+      // Add digit → keep formatting
+      const digits = (phone.replace(/\D/g, "") + value).slice(0, 10);
+      formatPhone(digits);
     }
   };
 
-  // ✅ Only trigger sendOtp when phone reaches 10 digits
+  // ✅ Format digits to mask
+  const formatPhone = (digits) => {
+    let formatted = digits;
+    if (digits.length > 6) {
+      formatted = `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6)}`;
+    } else if (digits.length > 3) {
+      formatted = `(${digits.slice(0, 3)}) ${digits.slice(3)}`;
+    } else if (digits.length > 0) {
+      formatted = `(${digits}`;
+    }
+    setPhone(formatted);
+  };
+
+  // ✅ Auto-trigger OTP when 10 digits entered
   useEffect(() => {
-    if (phone.length === 10) {
+    if (phone.replace(/\D/g, "").length === 10) {
       sendOtp();
     }
+    // eslint-disable-next-line
   }, [phone]);
 
   const sendOtp = async () => {
     try {
-      const res = await axios.post(`${BACKEND_URL}/api/auth/send-otp`, { phone });
+      const cleanPhone = phone.replace(/\D/g, ""); // ✅ strip mask before sending
+      const res = await axios.post(`${BACKEND_URL}/api/auth/send-otp`, { phone: cleanPhone });
       toast.success(res.data.message);
-      navigate("/opt-verified", { state: { phone, customerType: "existing" } });
+      navigate("/opt-verified", { state: { phone: cleanPhone, customerType: "existing" } });
     } catch (err) {
       toast.error(err?.response?.data?.message || "Error sending OTP");
     }
@@ -70,13 +94,13 @@ function ExistingCustomerLogin() {
 
               <div className="pin-inputs d-flex justify-content-center gap-3">
                 <input
+                  ref={phoneRef}
                   type="text"
-                  maxLength="10"
                   className="pin-box mobile-number"
                   value={phone}
                   onChange={(e) => {
-                    const value = e.target.value.replace(/\D/g, "").slice(0, 10);
-                    setPhone(value);
+                    const digits = e.target.value.replace(/\D/g, "").slice(0, 10);
+                    formatPhone(digits);
                   }}
                 />
               </div>

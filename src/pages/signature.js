@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import SignaturePad from "react-signature-canvas";
 import axios from "axios";
 import { toast } from 'react-toastify';
-import { getCurrentESTTime } from "../utils/time";
+
 
 
 
@@ -81,7 +81,7 @@ function Signature() {
       }
     }
 
-    console.log("LocalStorage empty, fetching customer data...");
+    // console.log("LocalStorage empty, fetching customer data...");
 
     const fetchCustomer = async () => {
       try {
@@ -213,6 +213,13 @@ function Signature() {
     }
   };
 
+function formatPhone(phone = "") {
+  const digits = phone.replace(/\D/g, "");
+  if (digits.length === 10) {
+    return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6)}`;
+  }
+  return phone; // fallback
+}
 
 
 
@@ -285,9 +292,9 @@ function Signature() {
           <td><strong>Postal Code:</strong><br /> <span>{customerData.postal_code} </span></td>
         </tr>
         <tr>
-          <td><strong>Home Phone:</strong><br /> <span> {customerData.home_phone} </span></td>
-          <td><strong>Cell Phone:</strong><br /> <span> {customerData.cell_phone} </span></td>
-          <td><strong>Work Phone:</strong><br /> <span> {customerData.work_phone} </span></td>
+          <td><strong>Home Phone:</strong><br /> <span> {formatPhone(customerData.home_phone)} </span></td>
+          <td><strong>Cell Phone:</strong><br /> <span> {formatPhone(customerData.cell_phone)} </span></td>
+          <td><strong>Work Phone:</strong><br /> <span> {formatPhone(customerData.work_phone)} </span></td>
           <td><strong>Email:</strong><br /> <span> {customerData.email || '--'} </span></td>
           <td>
             <strong>Can we email?</strong><br /> <span>

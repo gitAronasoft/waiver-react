@@ -177,6 +177,15 @@ const handleDownloadPDF = async () => {
 };
 
 
+function formatPhone(phone = "") {
+  const digits = phone.replace(/\D/g, "");
+  if (digits.length === 10) {
+    return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6)}`;
+  }
+  return phone; // fallback
+}
+
+
   if (isLoading) return <div className="text-center mt-5">Loading...</div>;
 
   return (
@@ -227,9 +236,9 @@ const handleDownloadPDF = async () => {
           <td><strong>Postal Code:</strong><br />{customer.postal_code}</td>
         </tr>
         <tr>
-          <td><strong>Home Phone:</strong><br />{customer.home_phone}</td>
-          <td><strong>Cell Phone:</strong><br />{customer.cell_phone}</td>
-          <td><strong>Work Phone:</strong><br />{customer.work_phone}</td>
+          <td><strong>Home Phone:</strong><br />{formatPhone(customer.home_phone)}</td>
+          <td><strong>Cell Phone:</strong><br />{formatPhone(customer.cell_phone)}</td>
+          <td><strong>Work Phone:</strong><br />{formatPhone(customer.work_phone)}</td>
           <td><strong>Email:</strong><br />{customer.email || '--'}</td>
           <td>
             <strong>Can we email?</strong><br />
@@ -459,8 +468,8 @@ AND ADMINISTRATORS MAY HAVE AGAINST SKATE & PLAY INC. </span> </p>
                   <input type="text" className="form-control" value={`${customer.first_name} ${customer.last_name}`} readOnly />
                 </div>
                 <div className="w-100 mb-3">
-                  <label className="form-label">Phone Number</label>
-                  <input type="text" className="form-control" value={customer.cell_phone} readOnly />
+                  <label className="form-label">Cell Phone</label>
+                  <input type="text" className="form-control" value={formatPhone(customer.cell_phone)} readOnly />
                 </div>
               </div>
 

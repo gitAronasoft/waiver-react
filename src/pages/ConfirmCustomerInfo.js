@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate , Link} from "react-router-dom";
 import axios from "axios";
 import { toast } from 'react-toastify';
+import { useMask } from "@react-input/mask"; // ✅ Import mask
 
 function ConfirmCustomerInfo() {
   const location = useLocation();
@@ -13,6 +14,11 @@ function ConfirmCustomerInfo() {
 
   const [formData, setFormData] = useState(null);
   const [minorList, setMinorList] = useState([]);
+   // ✅ Phone mask refs
+  const homePhoneRef = useMask({ mask: "(___) ___-____", replacement: { _: /\d/ } });
+  const cellPhoneRef = useMask({ mask: "(___) ___-____", replacement: { _: /\d/ } });
+  const workPhoneRef = useMask({ mask: "(___) ___-____", replacement: { _: /\d/ } });
+
 
   useEffect(() => {
     if (phone) {
@@ -20,6 +26,23 @@ function ConfirmCustomerInfo() {
         .get(`${BACKEND_URL}/api/waivers/customer-info?phone=${phone}`)
         .then((res) => {
           const data = res.data.customer;
+
+
+            // ✅ Convert numbers into masked format if exists
+          const formatPhone = (num) => {
+            if (!num) return "";
+            const digits = num.replace(/\D/g, "").slice(0, 10);
+            if (digits.length === 10) {
+              return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6)}`;
+            }
+            return digits;
+          };
+
+          data.home_phone = formatPhone(data.home_phone);
+          data.cell_phone = formatPhone(data.cell_phone);
+          data.work_phone = formatPhone(data.work_phone);
+
+
           data.can_email = data.can_email === 1 || data.can_email === "1";
           setFormData(data);
 
@@ -41,18 +64,39 @@ function ConfirmCustomerInfo() {
     }
   }, [phone, BACKEND_URL]);
 
-  const handleChange = (e) => {
-    const { name, value, type } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: type === "number" ? Number(value) : value,
-    }));
+  // const handleChange = (e) => {
+  //   const { name, value, type } = e.target;
+  //   setFormData((prev) => ({
+  //     ...prev,
+  //     [name]: type === "number" ? Number(value) : value,
+  //   }));
+  // };
+
+   const handleChange = (e) => {
+    const { name, value } = e.target;
+
+    // ✅ If it's a phone → only store masked for UI
+    if (["home_phone", "cell_phone", "work_phone"].includes(name)) {
+      setFormData((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    } else {
+      setFormData((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
   };
 
   const goToSignature = async () => {
     try {
+       const stripMask = (val) => (val ? val.replace(/\D/g, "") : ""); // ✅ remove formatting
       const updatedData = {
         ...formData,
+        home_phone: stripMask(formData.home_phone),
+        cell_phone: stripMask(formData.cell_phone),
+        work_phone: stripMask(formData.work_phone),
         minors: minorList.map((minor) => ({
           id: minor.id,
           first_name: minor.first_name,
@@ -145,7 +189,7 @@ function ConfirmCustomerInfo() {
                       </td>
                     </tr>
                     <tr>
-                      <td>
+                      {/* <td>
                         Home Phone:<br />
                         <input type="tel" name="home_phone" value={formData.home_phone || ""} onChange={handleChange} className="form-control" readOnly/>
                       </td>
@@ -156,6 +200,39 @@ function ConfirmCustomerInfo() {
                       <td>
                         Work Phone:<br />
                         <input type="tel" name="work_phone" value={formData.work_phone || ""} onChange={handleChange} className="form-control" readOnly/>
+                      </td> */}
+                       <td>
+                        Home Phone:<br />
+                        <input
+                          ref={homePhoneRef}
+                          type="tel"
+                          name="home_phone"
+                          value={formData.home_phone || ""}
+                          onChange={handleChange}
+                          className="form-control"
+                        />
+                      </td>
+                      <td>
+                        Cell Phone:<br />
+                        <input
+                          ref={cellPhoneRef}
+                          type="tel"
+                          name="cell_phone"
+                          value={formData.cell_phone || ""}
+                          onChange={handleChange}
+                          className="form-control"
+                        />
+                      </td>
+                      <td>
+                        Work Phone:<br />
+                        <input
+                          ref={workPhoneRef}
+                          type="tel"
+                          name="work_phone"
+                          value={formData.work_phone || ""}
+                          onChange={handleChange}
+                          className="form-control"
+                        />
                       </td>
                       <td>
                         Email:<br />
