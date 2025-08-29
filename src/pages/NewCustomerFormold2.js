@@ -13,23 +13,28 @@ function NewCustomerForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
-  const cellPhoneRef = useMask({
-    mask: "(___) ___-____",
-    replacement: { _: /\d/ },
-  });
+  const homePhoneRef = useMask({ mask: "(___) ___-____", replacement: { _: /\d/ } });
+const cellPhoneRef = useMask({ mask: "(___) ___-____", replacement: { _: /\d/ } });
+const workPhoneRef = useMask({ mask: "(___) ___-____", replacement: { _: /\d/ } });
 
-  const stripMask = (val) => (val ? val.replace(/\D/g, "") : ""); // remove formatting
+const stripMask = (val) => (val ? val.replace(/\D/g, "") : ""); // ✅ remove formatting
+
 
   const [formData, setFormData] = useState({
     first_name: "",
     last_name: "",
+    middle_initial: "",
     dob: "",
+    age: "",
     address: "",
     city: "",
     province: "",
     postal_code: "",
+    home_phone: "",
     cell_phone: "",
+    work_phone: "",
     email: "",
+    can_email: false,
     signing_for_minor: false,
     minors: [],
   });
@@ -66,23 +71,30 @@ function NewCustomerForm() {
     const fullData = { ...formData, minors: minorList, send_otp: isChecked };
 
     try {
-      const response = await axios.post(`${BACKEND_URL}/api/waivers`, fullData);
-      if (isChecked) {
-        toast.success(`Customer created and OTP sent successfully.`);
-        navigate("/opt-verified", {
-          state: { phone: stripMask(formData.cell_phone), customerType: "new" },
-        });
-      } else {
-        toast.success("Customer created successfully. Skipping OTP.");
-        navigate("/signature", {
-          state: { phone: stripMask(formData.cell_phone) },
-        });
-      }
+    //   const response = await axios.post(`${BACKEND_URL}/api/waivers`, fullData);
+    //   // const otp = response.data.otp;
+
+    //   toast.success(`Customer created and OTP sent successfully.`);
+    //   navigate("/opt-verified", {
+    //     state: { phone: formData.cell_phone, customerType: "new" },
+    //   });
+const response = await axios.post(`${BACKEND_URL}/api/waivers`, fullData);
+    if (isChecked) {
+    toast.success(`Customer created and OTP sent successfully.`);
+    navigate("/opt-verified", {
+      state: { phone: stripMask(formData.cell_phone), customerType: "new" },
+       
+    });
+  } else {
+    toast.success("Customer created successfully. Skipping OTP.");
+     
+    navigate("/signature", {   // <-- go straight to signature
+      state: { phone: stripMask(formData.cell_phone) },
+    });
+  }
     } catch (err) {
       if (err.response && err.response.status === 409) {
-        toast.error(
-          "🚫 This phone number already exists. Please use a different number."
-        );
+        toast.error("🚫 This phone number already exists. Please use a different number.");
         setShowDuplicateNotice(true);
       } else if (err.response && err.response.data?.error) {
         toast.error(`❌ ${err.response.data.error}`);
@@ -101,6 +113,28 @@ function NewCustomerForm() {
     });
   };
 
+  useEffect(() => {
+    if (formData.dob) {
+      const dobDate = new Date(formData.dob);
+      const today = new Date();
+      let age = today.getFullYear() - dobDate.getFullYear();
+      const m = today.getMonth() - dobDate.getMonth();
+
+      if (m < 0 || (m === 0 && today.getDate() < dobDate.getDate())) {
+        age--;
+      }
+
+      setFormData((prev) => ({ ...prev, age: age.toString() }));
+    }
+  }, [formData.dob]);
+
+  // ✅ Auto-select "Yes" for "Can we email?" if checkbox is unchecked and not already yes
+  useEffect(() => {
+    if (!isChecked && formData.can_email !== true) {
+      setFormData((prev) => ({ ...prev, can_email: true }));
+    }
+  }, [isChecked, formData.can_email]);
+
   return (
     <div className="container-fluid">
       <div className="container text-center">
@@ -108,12 +142,7 @@ function NewCustomerForm() {
           <div className="col-md-2">
             <div className="back-btn">
               <Link to="/">
-                <img
-                  className="img-fluid"
-                  src="/assets/img/image 298.png"
-                  alt="back-icon"
-                />{" "}
-                BACK
+                <img className="img-fluid" src="/assets/img/image 298.png" alt="back-icon" /> BACK
               </Link>
             </div>
           </div>
@@ -121,11 +150,7 @@ function NewCustomerForm() {
           <div className="col-12 col-md-8 col-xl-8">
             <div className="step-two step-three">
               <div className="logo">
-                <img
-                  className="img-fluid"
-                  src="/assets/img/SKATE_AND_PLAY_V08_Full_Transparency (2) 1.png"
-                  alt="logo"
-                />
+                <img className="img-fluid" src="/assets/img/SKATE_AND_PLAY_V08_Full_Transparency (2) 1.png" alt="logo" />
               </div>
             </div>
           </div>
@@ -140,100 +165,74 @@ function NewCustomerForm() {
                   <tbody>
                     <tr>
                       <td>
-                        First Name:<span className="required-star">*</span>
-                        <br />
-                        <input
-                          type="text"
-                          name="first_name"
-                          value={formData.first_name}
-                          onChange={handleChange}
-                          className="form-control"
-                          required
-                        />
+                        First Name:<span className="required-star">*</span><br />
+                        <input type="text" name="first_name" value={formData.first_name} onChange={handleChange} className="form-control" required />
                       </td>
                       <td>
-                        Last Name:<span className="required-star">*</span>
-                        <br />
-                        <input
-                          type="text"
-                          name="last_name"
-                          value={formData.last_name}
-                          onChange={handleChange}
-                          className="form-control"
-                          required
-                        />
+                        Last Name:<span className="required-star">*</span><br />
+                        <input type="text" name="last_name" value={formData.last_name} onChange={handleChange} className="form-control" required />
                       </td>
                       <td>
-                        DOB:<span className="required-star">*</span>
-                        <br />
-                        <input
-                          type="date"
-                          name="dob"
-                          value={formData.dob}
-                          onChange={handleChange}
-                          className="form-control"
-                          required
-                        />
+                        Middle Initial:<br />
+                        <input type="text" name="middle_initial" value={formData.middle_initial} onChange={handleChange} className="form-control" />
+                      </td>
+                      <td>
+                        DOB:<span className="required-star">*</span><br />
+                        <input type="date" name="dob" value={formData.dob} onChange={handleChange} className="form-control" required />
+                      </td>
+                      <td>
+                        Age:<span className="required-star">*</span><br />
+                        <input type="number" name="age" value={formData.age} onChange={handleChange} className="form-control" required />
                       </td>
                     </tr>
 
                     <tr>
-                      <td >
-                        Address:<span className="required-star">*</span>
-                        <br />
-                        <input
-                          type="text"
-                          name="address"
-                          value={formData.address}
-                          onChange={handleChange}
-                          className="form-control"
-                          required
-                        />
+                      <td colSpan="2">
+                        Address:<span className="required-star">*</span><br />
+                        <input type="text" name="address" value={formData.address} onChange={handleChange} className="form-control" required />
                       </td>
                       <td>
-                        City:<span className="required-star">*</span>
-                        <br />
-                        <input
-                          type="text"
-                          name="city"
-                          value={formData.city}
-                          onChange={handleChange}
-                          className="form-control"
-                          required
-                        />
+                        City:<span className="required-star">*</span><br />
+                        <input type="text" name="city" value={formData.city} onChange={handleChange} className="form-control" required />
                       </td>
                       <td>
-                        Province:<span className="required-star">*</span>
-                        <br />
-                        <input
-                          type="text"
-                          name="province"
-                          value={formData.province}
-                          onChange={handleChange}
-                          className="form-control"
-                          required
-                        />
+                        Province:<span className="required-star">*</span><br />
+                        <input type="text" name="province" value={formData.province} onChange={handleChange} className="form-control" required />
                       </td>
-                    
+                      <td>
+                        Postal Code:<span className="required-star">*</span><br />
+                        <input type="text" name="postal_code" value={formData.postal_code} onChange={handleChange} className="form-control" required />
+                      </td>
                     </tr>
 
                     <tr>
-
-                          <td>
-                        Postal Code:<span className="required-star">*</span>
-                        <br />
+                      {/* <td>
+                        Home Phone:<span className="required-star">*</span><br />
+                        <input type="tel" name="home_phone" value={formData.home_phone} onChange={handleChange} className="form-control" required />
+                      </td>
+                      <td>
+                        Cell Phone:<span className="required-star">*</span><br />
+                        <input type="tel" name="cell_phone" value={formData.cell_phone} onChange={handleChange} className="form-control" required />
+                      </td>
+                      <td>
+                        Work Phone:<br />
+                        <input type="tel" name="work_phone" value={formData.work_phone} onChange={handleChange} className="form-control" />
+                      </td> */}
+                      <td>
+                        Home Phone:<span className="required-star">*</span><br />
                         <input
-                          type="text"
-                          name="postal_code"
-                          value={formData.postal_code}
+                          ref={homePhoneRef}
+                          type="tel"
+                          name="home_phone"
+                          value={formData.home_phone}
                           onChange={handleChange}
                           className="form-control"
                           required
                         />
                       </td>
+
                       <td>
-                        Cell Phone:<span className="required-star">*</span>
-                        <br />
+                        Cell Phone:<span className="required-star">*</span><br />
                         <input
                           ref={cellPhoneRef}
                           type="tel"
@@ -245,17 +244,44 @@ function NewCustomerForm() {
                         />
                       </td>
 
-                      <td >
-                        Email:<span className="required-star">*</span>
-                        <br />
+                      <td>
+                        Work Phone:<br />
                         <input
-                          type="email"
-                          name="email"
-                          value={formData.email}
+                          ref={workPhoneRef}
+                          type="tel"
+                          name="work_phone"
+                          value={formData.work_phone}
                           onChange={handleChange}
                           className="form-control"
-                          required
                         />
+                      </td>
+
+                      <td>
+                        Email:<span className="required-star">*</span><br />
+                        <input type="email" name="email" value={formData.email} onChange={handleChange} className="form-control" />
+                      </td>
+                      <td className="custom-email-label">
+                        Can we email?<br />
+                        <label>
+                          <input
+                            type="radio"
+                            name="can_email"
+                            className="custom_email"
+                            checked={formData.can_email === true}
+                            onChange={() => setFormData((p) => ({ ...p, can_email: true }))}
+                          />{" "}
+                          Yes
+                        </label>
+                        <label className="ms-3">
+                          <input
+                            type="radio"
+                            name="can_email"
+                            className="custom_email"
+                            checked={formData.can_email === false}
+                            onChange={() => setFormData((p) => ({ ...p, can_email: false }))}
+                          />{" "}
+                          No
+                        </label>
                       </td>
                     </tr>
                   </tbody>
@@ -273,9 +299,7 @@ function NewCustomerForm() {
                       onChange={() => {
                         setFormData((p) => ({ ...p, signing_for_minor: true }));
                         if (minorList.length === 0) {
-                          setMinorList([
-                            { first_name: "", last_name: "", dob: "" },
-                          ]);
+                          setMinorList([{ first_name: "", last_name: "", dob: "" }]);
                         }
                       }}
                     />{" "}
@@ -287,10 +311,7 @@ function NewCustomerForm() {
                       name="signing_for_minor"
                       checked={formData.signing_for_minor === false}
                       onChange={() => {
-                        setFormData((p) => ({
-                          ...p,
-                          signing_for_minor: false,
-                        }));
+                        setFormData((p) => ({ ...p, signing_for_minor: false }));
                         setMinorList([]);
                       }}
                     />{" "}
@@ -308,26 +329,20 @@ function NewCustomerForm() {
                         className="form-control"
                         placeholder="First Name"
                         value={minor.first_name}
-                        onChange={(e) =>
-                          handleMinorChange(index, "first_name", e.target.value)
-                        }
+                        onChange={(e) => handleMinorChange(index, "first_name", e.target.value)}
                       />
                       <input
                         type="text"
                         className="form-control"
                         placeholder="Last Name"
                         value={minor.last_name}
-                        onChange={(e) =>
-                          handleMinorChange(index, "last_name", e.target.value)
-                        }
+                        onChange={(e) => handleMinorChange(index, "last_name", e.target.value)}
                       />
                       <input
                         type="date"
                         className="form-control"
                         value={minor.dob}
-                        onChange={(e) =>
-                          handleMinorChange(index, "dob", e.target.value)
-                        }
+                        onChange={(e) => handleMinorChange(index, "dob", e.target.value)}
                       />
                       <button
                         type="button"
@@ -359,9 +374,7 @@ function NewCustomerForm() {
                     />
                     <span className="custom-checkbox-label">
                       <h5>
-                        Save time on your next visit! Use your phone number as a
-                        reference for future waivers. Just check the box and
-                        receive a quick validation text.
+                        Save time on your next visit! Use your phone number as a reference for future waivers. Just check the box and receive a quick validation text.
                       </h5>
                     </span>
                   </label>
@@ -371,34 +384,20 @@ function NewCustomerForm() {
               <div className="buttons mb-5">
                 {showDuplicateNotice && (
                   <div className="alert alert-warning w-50 mx-auto text-center">
-                    This phone number already exists. Please proceed as an
-                    existing user. <br />
+                    This phone number already exists. Please proceed as an existing user. <br />
                     If you want to log in,{" "}
                     <span
                       onClick={handleNextClick}
-                      style={{
-                        textDecoration: "underline",
-                        cursor: "pointer",
-                        color: "#0d6efd",
-                      }}
+                      style={{ textDecoration: "underline", cursor: "pointer", color: "#0d6efd" }}
                     >
                       click here
-                    </span>
-                    .
+                    </span>.
                   </div>
                 )}
-                <button
-                  type="submit"
-                  className="btn btn-primary w-25"
-                  disabled={isSubmitting}
-                >
+                <button type="submit" className="btn btn-primary w-25" disabled={isSubmitting}>
                   {isSubmitting ? (
                     <>
-                      <span
-                        className="spinner-border spinner-border-sm me-2"
-                        role="status"
-                        aria-hidden="true"
-                      ></span>
+                      <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
                       Submitting...
                     </>
                   ) : (

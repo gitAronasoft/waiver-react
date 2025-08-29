@@ -76,7 +76,7 @@ function ConfirmCustomerInfo() {
     const { name, value } = e.target;
 
     // ✅ If it's a phone → only store masked for UI
-    if (["home_phone", "cell_phone", "work_phone"].includes(name)) {
+    if ([ "cell_phone"].includes(name)) {
       setFormData((prev) => ({
         ...prev,
         [name]: value,
@@ -94,9 +94,9 @@ function ConfirmCustomerInfo() {
        const stripMask = (val) => (val ? val.replace(/\D/g, "") : ""); // ✅ remove formatting
       const updatedData = {
         ...formData,
-        home_phone: stripMask(formData.home_phone),
+      
         cell_phone: stripMask(formData.cell_phone),
-        work_phone: stripMask(formData.work_phone),
+     
         minors: minorList.map((minor) => ({
           id: minor.id,
           first_name: minor.first_name,
@@ -157,21 +157,15 @@ function ConfirmCustomerInfo() {
                         Participant Last Name:<br />
                         <input type="text" name="last_name" value={formData.last_name || ""} onChange={handleChange} className="form-control" readOnly />
                       </td>
-                      <td>
-                        Middle Initial:<br />
-                        <input type="text" name="middle_initial" value={formData.middle_initial || ""} onChange={handleChange} className="form-control" readOnly />
-                      </td>
+                    
                       <td>
                         Date of Birth:<br />
                         <input type="date" name="dob" value={formData.dob || ""} onChange={handleChange} className="form-control" readOnly/>
                       </td>
-                      <td>
-                        Age:<br />
-                        <input type="number" name="age" value={formData.age || ""} onChange={handleChange} className="form-control" readOnly/>
-                      </td>
+                     
                     </tr>
                     <tr>
-                      <td colSpan="2">
+                      <td>
                         Address:<br />
                         <input type="text" name="address" value={formData.address || ""} onChange={handleChange} className="form-control" readOnly/>
                       </td>
@@ -183,34 +177,13 @@ function ConfirmCustomerInfo() {
                         Province:<br />
                         <input type="text" name="province" value={formData.province || ""} onChange={handleChange} className="form-control" readOnly/>
                       </td>
+                    
+                    </tr>
+                    <tr>
+                 
                       <td>
                         Postal Code:<br />
                         <input type="text" name="postal_code" value={formData.postal_code || ""} onChange={handleChange} className="form-control" readOnly/>
-                      </td>
-                    </tr>
-                    <tr>
-                      {/* <td>
-                        Home Phone:<br />
-                        <input type="tel" name="home_phone" value={formData.home_phone || ""} onChange={handleChange} className="form-control" readOnly/>
-                      </td>
-                      <td>
-                        Cell Phone:<br />
-                        <input type="tel" name="cell_phone" value={formData.cell_phone || ""} onChange={handleChange} className="form-control" readOnly/>
-                      </td>
-                      <td>
-                        Work Phone:<br />
-                        <input type="tel" name="work_phone" value={formData.work_phone || ""} onChange={handleChange} className="form-control" readOnly/>
-                      </td> */}
-                       <td>
-                        Home Phone:<br />
-                        <input
-                          ref={homePhoneRef}
-                          type="tel"
-                          name="home_phone"
-                          value={formData.home_phone || ""}
-                          onChange={handleChange}
-                          className="form-control"
-                        />
                       </td>
                       <td>
                         Cell Phone:<br />
@@ -223,30 +196,12 @@ function ConfirmCustomerInfo() {
                           className="form-control"
                         />
                       </td>
-                      <td>
-                        Work Phone:<br />
-                        <input
-                          ref={workPhoneRef}
-                          type="tel"
-                          name="work_phone"
-                          value={formData.work_phone || ""}
-                          onChange={handleChange}
-                          className="form-control"
-                        />
-                      </td>
+                     
                       <td>
                         Email:<br />
                         <input type="email" name="email" value={formData.email || ""} onChange={handleChange} className="form-control" readOnly/>
                       </td>
-                      <td className="custom-email-label">
-                        Can we email?<br />
-                        <label>
-                          <input type="radio" name="can_email" value="true" checked={formData.can_email === true} onChange={() => setFormData((p) => ({ ...p, can_email: true }))} /> Yes
-                        </label>
-                        <label className="ms-3">
-                          <input type="radio" name="can_email" value="false" checked={formData.can_email === false} onChange={() => setFormData((p) => ({ ...p, can_email: false }))} /> No
-                        </label>
-                      </td>
+                     
                     </tr>
                   </tbody>
                 </table>

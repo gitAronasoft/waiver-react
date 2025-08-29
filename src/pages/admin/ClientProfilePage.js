@@ -225,25 +225,23 @@ function formatPhone(phone = "") {
         <tr>
           <td><strong>Participant First Name:</strong><br />{customer.first_name}</td>
           <td><strong>Participant Last Name:</strong><br />{customer.last_name}</td>
-          <td><strong>Middle Initial:</strong><br />{customer.middle_initial || 'None'}</td>
+          
           <td><strong>Date of Birth:</strong><br />{customer.dob?.split("T")[0]}</td>
-          <td><strong>Age:</strong><br />{customer.age || '--'}</td>
+         
         </tr>
         <tr>
-          <td colSpan="2"><strong>Address:</strong><br />{customer.address}</td>
+          <td ><strong>Address:</strong><br />{customer.address}</td>
           <td><strong>City:</strong><br />{customer.city}</td>
           <td><strong>Province:</strong><br />{customer.province}</td>
-          <td><strong>Postal Code:</strong><br />{customer.postal_code}</td>
+         
         </tr>
         <tr>
-          <td><strong>Home Phone:</strong><br />{formatPhone(customer.home_phone)}</td>
+           <td><strong>Postal Code:</strong><br />{customer.postal_code}</td>
+        
           <td><strong>Cell Phone:</strong><br />{formatPhone(customer.cell_phone)}</td>
-          <td><strong>Work Phone:</strong><br />{formatPhone(customer.work_phone)}</td>
+        
           <td><strong>Email:</strong><br />{customer.email || '--'}</td>
-          <td>
-            <strong>Can we email?</strong><br />
-            {customer.can_email ? 'Yes' : 'No'}
-          </td>
+        
         </tr>
       </tbody>
     </table>
