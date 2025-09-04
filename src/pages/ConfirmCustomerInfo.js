@@ -217,7 +217,7 @@ function ConfirmCustomerInfo() {
                       <input
                         type="checkbox"
                         className="custom-checkbox"
-                        checked={minor.checked}
+                      checked={minor.checked}
                         onChange={(e) => {
                           const updated = [...minorList];
                           updated[index].checked = e.target.checked;
@@ -228,6 +228,7 @@ function ConfirmCustomerInfo() {
                     <input
                       type="text"
                       className="form-control"
+                      placeholder="First Name"
                       value={minor.first_name}
                       onChange={(e) => {
                         const updated = [...minorList];
@@ -238,6 +239,7 @@ function ConfirmCustomerInfo() {
                     <input
                       type="text"
                       className="form-control"
+                        placeholder="Last Name"
                       value={minor.last_name}
                       onChange={(e) => {
                         const updated = [...minorList];
