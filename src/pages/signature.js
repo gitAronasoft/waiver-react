@@ -294,7 +294,7 @@ function formatPhone(phone = "") {
         <tr>
             <td><strong>Postal Code:</strong><br /> <span>{customerData.postal_code} </span></td>
        
-          <td><strong>Cell Phone:</strong><br /> <span> {formatPhone(customerData.cell_phone)} </span></td>
+          <td><strong>Cell Phone:</strong><br /> <span> {customerData.country_code} {formatPhone(customerData.cell_phone)} </span></td>
      
           <td><strong>Email:</strong><br /> <span> {customerData.email || '--'} </span></td>
         

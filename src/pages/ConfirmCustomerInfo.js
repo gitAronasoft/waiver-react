@@ -185,15 +185,31 @@ function ConfirmCustomerInfo() {
                         Postal Code:<br />
                         <input type="text" name="postal_code" value={formData.postal_code || ""} onChange={handleChange} className="form-control" readOnly/>
                       </td>
-                      <td>
+                      {/* <td>
                         Cell Phone:<br />
                         <input
                           ref={cellPhoneRef}
                           type="tel"
                           name="cell_phone"
-                          value={formData.cell_phone || ""}
+                          value={`${formData.country_code} ${formData.cell_phone}` || ""}
                           onChange={handleChange}
                           className="form-control"
+                          readOnly
+                        />
+                      </td> */}
+
+                      <td>
+                        Cell Phone:<br />
+                        <input
+                          type="tel"
+                          name="cell_phone"
+                          value={
+                            formData.country_code && formData.cell_phone
+                              ? `${formData.country_code} ${formData.cell_phone}`.trim()
+                              : formData.cell_phone || ""
+                          }
+                          className="form-control"
+                          readOnly
                         />
                       </td>
                      

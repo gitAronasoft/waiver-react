@@ -3,6 +3,9 @@ import axios from "axios";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useMask } from "@react-input/mask";
+import { countryCodes } from "../countryCodes";
+
+
 
 function NewCustomerForm() {
   const navigate = useNavigate();
@@ -20,6 +23,17 @@ function NewCustomerForm() {
 
   const stripMask = (val) => (val ? val.replace(/\D/g, "") : ""); // remove formatting
 
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
+  // Add this function to handle country selection
+  const handleCountrySelect = (code) => {
+    setFormData((prev) => ({
+      ...prev,
+      country_code: code,
+    }));
+    setIsDropdownOpen(false);
+  };
+
   const [formData, setFormData] = useState({
     first_name: "",
     last_name: "",
@@ -32,7 +46,8 @@ function NewCustomerForm() {
     email: "",
     signing_for_minor: false,
     minors: [],
-  });
+    country_code: "+1"
+  });  
 
   const [minorList, setMinorList] = useState([]);
 
@@ -63,7 +78,16 @@ function NewCustomerForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
-    const fullData = { ...formData, minors: minorList, send_otp: isChecked };
+    // const fullData = { ...formData, minors: minorList, send_otp: isChecked };
+
+
+    const phoneWithCode = `${formData.country_code}${stripMask(formData.cell_phone)}`;
+    const fullData = {
+      ...formData,
+      cc_cell_phone: phoneWithCode,
+      minors: minorList,
+      send_otp: isChecked,
+    };
 
     try {
       const response = await axios.post(`${BACKEND_URL}/api/waivers`, fullData);
@@ -231,7 +255,7 @@ function NewCustomerForm() {
                           required
                         />
                       </td>
-                      <td>
+                      {/* <td>
                         Cell Phone:<span className="required-star">*</span>
                         <br />
                         <input
@@ -243,6 +267,54 @@ function NewCustomerForm() {
                           className="form-control"
                           required
                         />
+                      </td> */}
+
+                      <td>
+                        Cell Phone:<span className="required-star">*</span>
+                        <br />
+                        <div className="phone-input-group">
+                          <div className="custom-dropdown" style={{ position: 'relative' }}>
+                            <div
+                              className="form-select"
+                              onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                              style={{ cursor: 'pointer' }}
+                            >
+                              {formData.country_code}
+                            </div>
+                            {isDropdownOpen && (
+                              <div
+                                className="dropdown-menu show"
+                                style={{
+                                  position: 'absolute',                              
+                                  maxHeight: '200px',
+                                  overflowY: 'auto',
+                                  zIndex: 1000,
+                                }}
+                              >
+                                {countryCodes.map((c, index) => (
+                                  <div
+                                    key={index}
+                                    className="dropdown-item"
+                                    onClick={() => handleCountrySelect(c.code)}
+                                    style={{ cursor: 'pointer' }}
+                                  >
+                                    {c.code} - {c.name}
+                                  </div>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+
+                          <input
+                            ref={cellPhoneRef}
+                            type="tel"
+                            name="cell_phone"
+                            value={formData.cell_phone}
+                            onChange={handleChange}
+                            className="form-control"
+                            required
+                          />
+                        </div>
                       </td>
 
                       <td >

@@ -102,7 +102,7 @@ const verifyOtp = async (otpValue) => {
                 <input
                   type="text"
                   maxLength="4"
-                  className="pin-box mobile-number"
+                  className="pin-box otp-number"
                   value={otp}
                   onChange={handleChange}
                 />

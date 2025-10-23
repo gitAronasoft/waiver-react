@@ -238,7 +238,7 @@ function formatPhone(phone = "") {
         <tr>
            <td><strong>Postal Code:</strong><br />{customer.postal_code}</td>
         
-          <td><strong>Cell Phone:</strong><br />{formatPhone(customer.cell_phone)}</td>
+          <td><strong>Cell Phone:</strong><br />{customer.country_code} {formatPhone(customer.cell_phone)}</td>
         
           <td><strong>Email:</strong><br />{customer.email || '--'}</td>
         
@@ -467,7 +467,7 @@ AND ADMINISTRATORS MAY HAVE AGAINST SKATE & PLAY INC. </span> </p>
                 </div>
                 <div className="w-100 mb-3">
                   <label className="form-label">Cell Phone</label>
-                  <input type="text" className="form-control" value={formatPhone(customer.cell_phone)} readOnly />
+                  <input type="text" className="form-control" value={`${customer.country_code} ${formatPhone(customer.cell_phone)}`} readOnly />
                 </div>
               </div>
 
